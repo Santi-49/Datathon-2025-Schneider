@@ -6,3 +6,4 @@
 - Mejorar visualizaciones de model.py
 - Optimizar prompts para muchas variables
 - Revisar requirements
+- Documentación
