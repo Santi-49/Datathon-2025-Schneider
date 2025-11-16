@@ -28,6 +28,11 @@ import llm
 # Load environment variables
 dotenv.load_dotenv()
 
+env_api_key = os.getenv("OPEN_AI_API_KEY", "")
+if env_api_key:
+    st.info("ℹ️ OpenAI API key loaded from environment variable.")
+    st.session_state["openai_api_key"] = env_api_key
+
 # Page configuration
 st.set_page_config(
     page_title="Schneider Electric | Sales Opportunity Explainability",
@@ -1512,11 +1517,6 @@ with tab5:
     )
 
     st.markdown("### API Configuration")
-
-    env_api_key = os.getenv("OPEN_AI_API_KEY", "")
-    if env_api_key:
-        st.info("ℹ️ OpenAI API key loaded from environment variable.")
-        st.session_state["openai_api_key"] = env_api_key
 
     else:
         st.warning(
