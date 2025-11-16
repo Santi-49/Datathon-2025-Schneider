@@ -32,13 +32,6 @@ env_api_key = os.getenv("OPEN_AI_API_KEY", "")
 if env_api_key:
     st.session_state["openai_api_key"] = env_api_key
 
-# ============================================================================
-# CONFIGURATION: Number of top features to show in LLM prompt (by |SHAP| importance)
-# ============================================================================
-st.session_state["TOP_N_FEATURES_IN_PROMPT"] = (
-    5  # Modify this value to change how many features appear in ##Feature Values section
-)
-
 # Page configuration
 st.set_page_config(
     page_title="Schneider Electric | Sales Opportunity Explainability",
@@ -1530,6 +1523,27 @@ with tab5:
         '<div class="sub-header"> Application Settings</div>', unsafe_allow_html=True
     )
 
+    st.markdown("### Prompt Configuration")
+
+    # Initialize session state for TOP_N_FEATURES_IN_PROMPT if not exists
+    if "TOP_N_FEATURES_IN_PROMPT" not in st.session_state:
+        st.session_state["TOP_N_FEATURES_IN_PROMPT"] = 5
+
+    top_n_features = st.number_input(
+        "Number of Top Features in Prompt",
+        min_value=1,
+        max_value=15,
+        value=st.session_state["TOP_N_FEATURES_IN_PROMPT"],
+        step=1,
+        help="Configure how many top features (by SHAP importance) appear in the Feature Values section of the generated prompt.",
+    )
+
+    if top_n_features != st.session_state["TOP_N_FEATURES_IN_PROMPT"]:
+        st.session_state["TOP_N_FEATURES_IN_PROMPT"] = top_n_features
+        st.success(f"✅ Updated to show top {top_n_features} features in prompts")
+        st.rerun()
+
+    st.markdown("---")
     st.markdown("### API Configuration")
 
     if "openai_api_key" in st.session_state and st.session_state["openai_api_key"]:
@@ -1555,7 +1569,7 @@ with tab5:
             st.info("ℹ️ No API key provided. Some features may be limited.")
 
     st.markdown("---")
-    st.markdown("### ℹ️ About")
+    st.markdown("### About")
     st.write(
         "This application provides explainability tools for sales opportunity predictions."
     )
