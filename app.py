@@ -1522,6 +1522,59 @@ with tab4:
         f" **Needs Improvement**: {worst_segment} segment (F1 = {segments.loc[worst_segment, 'F1']:.3f})"
     )
 
+    st.markdown("---")
+
+    # Model-generated plots
+    st.markdown("###  Model Analysis Visualizations")
+
+    st.markdown("#### SHAP Global Importance")
+    st.write(
+        "These plots show the global importance of features across all predictions."
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if Path("media/shap_summary.png").exists():
+            st.image(
+                "media/shap_summary.png",
+                caption="SHAP Summary Plot",
+                use_container_width=True,
+            )
+        else:
+            st.warning("SHAP summary plot not found")
+
+    with col2:
+        if Path("media/shap_bar.png").exists():
+            st.image(
+                "media/shap_bar.png",
+                caption="SHAP Bar Plot - Feature Importance",
+                use_container_width=True,
+            )
+        else:
+            st.warning("SHAP bar plot not found")
+
+    st.markdown("---")
+    st.markdown("#### Partial Dependence Plots (PDP)")
+    st.write(
+        "These plots show how individual features influence the model's predictions."
+    )
+
+    # Display PDP plots in a grid
+    pdp_files = [
+        ("media/pdp_cust_hitrate.png", "PDP - Customer Hit Rate"),
+        ("media/pdp_cust_interactions.png", "PDP - Customer Interactions"),
+        ("media/pdp_opp_old.png", "PDP - Opportunity Age"),
+    ]
+
+    cols = st.columns(3)
+    for idx, (file_path, caption) in enumerate(pdp_files):
+        with cols[idx]:
+            if Path(file_path).exists():
+                st.image(file_path, caption=caption, use_container_width=True)
+            else:
+                st.info(f"{caption} not available")
+
 # Tab 5: Settings
 with tab5:
     st.markdown(
