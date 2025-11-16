@@ -23,7 +23,7 @@ from sklearn.metrics import (
 # ============================================================================
 # CONFIGURATION: Number of top features to show in LLM prompt (by |SHAP| importance)
 # ============================================================================
-TOP_N_FEATURES_IN_PROMPT = 10  # Modify this value to change how many features appear in ##Feature Values section
+st.session_state["TOP_N_FEATURES_IN_PROMPT"] = 15  # Modify this value to change how many features appear in ##Feature Values section
 
 # Page configuration
 st.set_page_config(
@@ -578,7 +578,7 @@ with tab3:
             instance["shap_values"].items(),
             key=lambda x: abs(x[1]),
             reverse=True
-        )[:TOP_N_FEATURES_IN_PROMPT]
+        )[:st.session_state["TOP_N_FEATURES_IN_PROMPT"]]
         
         # Get the feature names from top N
         top_n_feature_names = [feat for feat, _ in sorted_features_by_shap]
@@ -591,7 +591,7 @@ with tab3:
             ]
         )
         
-        st.info(f"ℹ️ Showing top {len(top_n_feature_names)} most important features (by |SHAP|) in the prompt. Modify TOP_N_FEATURES_IN_PROMPT variable in code to change this.")
+        st.info(f"ℹ️ Showing top {len(top_n_feature_names)} most important features by |SHAP| value importance.")
 
         # Format SHAP explanation
         shap_explanation_text = "\n".join(
