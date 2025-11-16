@@ -184,12 +184,13 @@ filtered_df = filtered_df[
 ]
 
 # Main content
-tab1, tab2, tab3, tab4 = st.tabs(
+tab1, tab2, tab3, tab4, tab5 = st.tabs(
     [
-        " Dataset Overview",
-        " Explore Predictions",
-        " Generate LLM Prompt",
-        " Model Performance",
+        "Dataset Overview",
+        "Explore Predictions",
+        "Generate LLM Prompt",
+        "Model Performance",
+        "Settings"
     ]
 )
 
@@ -1171,6 +1172,37 @@ with tab4:
     st.warning(
         f" **Needs Improvement**: {worst_segment} segment (F1 = {segments.loc[worst_segment, 'F1']:.3f})"
     )
+
+# Tab 5: Settings
+with tab5:
+    st.markdown(
+        '<div class="sub-header"> Application Settings</div>', unsafe_allow_html=True
+    )
+    
+    st.markdown("### API Configuration")
+    
+    # OpenAI API Key input
+    api_key = st.text_input(
+        "OpenAI API Key",
+        type="password",
+        placeholder="sk-...",
+        help="Enter your OpenAI API key to enable LLM features. Your key is not stored permanently.",
+    )
+    
+    if api_key:
+        st.success("API Key provided")
+        # Store in session state for potential use
+        st.session_state['openai_api_key'] = api_key
+    else:
+        st.info("ℹ️ No API key provided. Some features may be limited.")
+    
+    st.markdown("---")
+    st.markdown("### ℹ️ About")
+    st.write("This application provides explainability tools for sales opportunity predictions.")
+    st.write("**Version**: 1.0.0")
+    st.write("**Model**: CatBoost Classifier")
+    st.write("**Framework**: Streamlit + SHAP")
+    
 
 # Footer
 st.markdown("---")
