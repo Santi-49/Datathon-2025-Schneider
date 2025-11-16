@@ -317,8 +317,7 @@ if predictions_df is None:
 st.sidebar.markdown(
     """
     <div style='text-align: center; padding: 1rem 0; margin-bottom: 1rem;'>
-        <h1 style='color: #3DCD58; font-size: 2.5rem; margin: 0;'>⚡</h1>
-        <h3 style='color: #3DCD58; margin: 0.5rem 0;'>AI Control Panel</h3>
+        <h1 style='color: #3DCD58; margin: 0.5rem 0;'>AI Control Panel</h3>
         <p style='color: #AAAAAA; font-size: 0.9rem; margin: 0;'>Schneider Electric</p>
     </div>
     """,
