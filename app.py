@@ -20,6 +20,11 @@ from sklearn.metrics import (
     average_precision_score,
 )
 
+# ============================================================================
+# CONFIGURATION: Number of top features to show in LLM prompt (by |SHAP| importance)
+# ============================================================================
+TOP_N_FEATURES_IN_PROMPT = 10  # Modify this value to change how many features appear in ##Feature Values section
+
 # Page configuration
 st.set_page_config(
     page_title="Sales Opportunity Explainability",
@@ -568,13 +573,25 @@ with tab3:
             unsafe_allow_html=True,
         )
 
-        # Format feature values
+        # Sort features by absolute SHAP impact and take top N
+        sorted_features_by_shap = sorted(
+            instance["shap_values"].items(),
+            key=lambda x: abs(x[1]),
+            reverse=True
+        )[:TOP_N_FEATURES_IN_PROMPT]
+        
+        # Get the feature names from top N
+        top_n_feature_names = [feat for feat, _ in sorted_features_by_shap]
+
+        # Format feature values (only top N by SHAP importance)
         feature_values_text = "\n".join(
             [
-                f"- **{feature_descriptions.get(k, k)}**: {v:.4f}"
-                for k, v in instance["feature_values"].items()
+                f"- **{feature_descriptions.get(k, k)}**: {instance['feature_values'][k]:.4f}"
+                for k in top_n_feature_names
             ]
         )
+        
+        st.info(f"ℹ️ Showing top {len(top_n_feature_names)} most important features (by |SHAP|) in the prompt. Modify TOP_N_FEATURES_IN_PROMPT variable in code to change this.")
 
         # Format SHAP explanation
         shap_explanation_text = "\n".join(
