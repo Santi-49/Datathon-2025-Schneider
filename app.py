@@ -317,8 +317,7 @@ if predictions_df is None:
 st.sidebar.markdown(
     """
     <div style='text-align: center; padding: 1rem 0; margin-bottom: 1rem;'>
-        <h1 style='color: #3DCD58; font-size: 2.5rem; margin: 0;'>⚡</h1>
-        <h3 style='color: #3DCD58; margin: 0.5rem 0;'>AI Control Panel</h3>
+        <h1 style='color: #3DCD58; margin: 0.5rem 0;'>AI Control Panel</h3>
         <p style='color: #AAAAAA; font-size: 0.9rem; margin: 0;'>Schneider Electric</p>
     </div>
     """,
@@ -467,36 +466,8 @@ with tab1:
         )
         st.plotly_chart(fig, use_container_width=True)
 
-    # Confusion Matrix
-    st.markdown(
-        '<div class="sub-header">Confusion Matrix</div>', unsafe_allow_html=True
-    )
-
-    confusion_data = pd.crosstab(
-        predictions_df["actual_outcome"].map({0: "LOST", 1: "WON"}),
-        predictions_df["prediction"].map({0: "LOST", 1: "WON"}),
-        rownames=["Actual"],
-        colnames=["Predicted"],
-    )
-
-    fig = px.imshow(
-        confusion_data,
-        text_auto=True,
-        aspect="auto",
-        color_continuous_scale=[[0, "#e8f5e9"], [0.5, "#3DCD58"], [1, "#004d1a"]],
-        labels=dict(x="Predicted", y="Actual"),
-        title="Model Performance",
-    )
-    fig.update_layout(
-        title_font_color="#FFFFFF",
-        title_font_size=18,
-        xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
-        yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
-    )
-    st.plotly_chart(fig, use_container_width=True)
-
-# Tab 2: Explore Predictions
-with tab2:
+    # Filtered Predictions
+    st.markdown("---")
     st.markdown(
         '<div class="sub-header">Filtered Predictions</div>', unsafe_allow_html=True
     )
@@ -532,6 +503,37 @@ with tab2:
 
     st.dataframe(display_data, use_container_width=True, height=400)
 
+    # Confusion Matrix
+    st.markdown("---")
+    st.markdown(
+        '<div class="sub-header">Confusion Matrix</div>', unsafe_allow_html=True
+    )
+
+    confusion_data = pd.crosstab(
+        predictions_df["actual_outcome"].map({0: "LOST", 1: "WON"}),
+        predictions_df["prediction"].map({0: "LOST", 1: "WON"}),
+        rownames=["Actual"],
+        colnames=["Predicted"],
+    )
+
+    fig = px.imshow(
+        confusion_data,
+        text_auto=True,
+        aspect="auto",
+        color_continuous_scale=[[0, "#e8f5e9"], [0.5, "#3DCD58"], [1, "#004d1a"]],
+        labels=dict(x="Predicted", y="Actual"),
+        title="Model Performance",
+    )
+    fig.update_layout(
+        title_font_color="#FFFFFF",
+        title_font_size=18,
+        xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+        yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+    )
+    st.plotly_chart(fig, use_container_width=True)
+
+# Tab 2: Global Feature Importance
+with tab2:
     # Top features by SHAP importance
     st.markdown(
         '<div class="sub-header">Global Feature Importance (Mean |SHAP|)</div>',
