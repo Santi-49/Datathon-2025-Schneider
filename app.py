@@ -142,7 +142,7 @@ if predictions_df is None:
     st.stop()
 
 # Sidebar filters
-st.sidebar.header("🔍 Filter Options")
+st.sidebar.header(" Filter Options")
 
 # Prediction filter
 prediction_filter = st.sidebar.multiselect(
@@ -355,7 +355,7 @@ with tab2:
         "Generate an LLM prompt to explain the global feature importance across all predictions."
     )
 
-    if st.button("🤖 Generate Global Importance Prompt"):
+    if st.button(" Generate Global Importance Prompt"):
         # Load global importance prompt template
         try:
             with open("templates/global_importance_prompt.txt", "r") as f:
@@ -431,16 +431,12 @@ with tab2:
             components.html(copy_button_html_global, height=60)
 
             st.info(
-                "💡 **Tip**: Copy this prompt and paste it into your preferred LLM to get strategic insights about which features drive sales success globally."
+                " **Tip**: Copy this prompt and paste it into your preferred LLM to get strategic insights about which features drive sales success globally."
             )
 
         except FileNotFoundError:
             st.error(
-<<<<<<< HEAD
                 " Global importance prompt template not found. Please ensure global_importance_prompt.txt exists."
-=======
-                "⚠️ Global importance prompt template not found. Please ensure templates/global_importance_prompt.txt exists."
->>>>>>> bb8610ee1ccabe8437ba9616f5a4676c831e03b4
             )
 
 # Tab 3: Generate LLM Prompt
@@ -706,7 +702,7 @@ with tab4:
     st.markdown("---")
 
     # Detailed confusion matrix with metrics
-    st.markdown("### 🔢 Confusion Matrix Analysis")
+    st.markdown("###  Confusion Matrix Analysis")
 
     col1, col2 = st.columns([1, 1])
 
