@@ -19,6 +19,11 @@ from sklearn.metrics import (
     precision_recall_curve,
     average_precision_score,
 )
+import dotenv
+import os
+
+# Load environment variables
+dotenv.load_dotenv()
 
 # Page configuration
 st.set_page_config(
@@ -1176,21 +1181,31 @@ with tab5:
     )
     
     st.markdown("### API Configuration")
+
+    env_api_key = os.getenv("OPEN_AI_API_KEY", "")
+    if env_api_key:
+        st.info("ℹ️ OpenAI API key loaded from environment variable.")
+        st.session_state['openai_api_key'] = env_api_key
     
-    # OpenAI API Key input
-    api_key = st.text_input(
-        "OpenAI API Key",
-        type="password",
-        placeholder="sk-...",
-        help="Enter your OpenAI API key to enable LLM features. Your key is not stored permanently.",
-    )
-    
-    if api_key:
-        st.success("API Key provided")
-        # Store in session state for potential use
-        st.session_state['openai_api_key'] = api_key
     else:
-        st.info("ℹ️ No API key provided. Some features may be limited.")
+        st.warning(
+            "⚠️ No OpenAI API key found in environment variables. Please enter your API key below to enable LLM features."
+        )
+
+        # OpenAI API Key input
+        api_key = st.text_input(
+            "OpenAI API Key",
+            type="password",
+            placeholder="sk-...",
+            help="Enter your OpenAI API key to enable LLM features. Your key is not stored permanently.",
+        )
+        
+        if api_key:
+            st.success("API Key provided")
+            # Store in session state for potential use
+            st.session_state['openai_api_key'] = api_key
+        else:
+            st.info("ℹ️ No API key provided. Some features may be limited.")
     
     st.markdown("---")
     st.markdown("### ℹ️ About")
