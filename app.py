@@ -19,8 +19,10 @@ from sklearn.metrics import (
     precision_recall_curve,
     average_precision_score,
 )
+import streamlit.components.v1 as components
 import dotenv
 import os
+import llm
 
 # Load environment variables
 dotenv.load_dotenv()
@@ -195,7 +197,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs(
         "Explore Predictions",
         "Generate LLM Prompt",
         "Model Performance",
-        "Settings"
+        "Settings",
     ]
 )
 
@@ -349,100 +351,121 @@ with tab2:
     fig.update_layout(yaxis={"categoryorder": "total ascending"})
     st.plotly_chart(fig, use_container_width=True)
 
-    # Generate Global Importance Prompt
+    # Global Feature Importance Explanation
     st.markdown("---")
     st.markdown(
         '<div class="sub-header"> Global Feature Importance Explanation</div>',
         unsafe_allow_html=True,
     )
 
-    st.write(
-        "Generate an LLM prompt to explain the global feature importance across all predictions."
-    )
+    # Load global importance prompt template
+    try:
+        with open("templates/global_importance_prompt.txt", "r") as f:
+            global_prompt_template = f.read()
 
-    if st.button(" Generate Global Importance Prompt"):
-        # Load global importance prompt template
-        try:
-            with open("templates/global_importance_prompt.txt", "r") as f:
-                global_prompt_template = f.read()
+        # Create full importance table (not just top 10)
+        full_importance_df = pd.DataFrame(
+            list(mean_shap.items()), columns=["Feature", "Mean |SHAP|"]
+        )
+        full_importance_df = full_importance_df.sort_values(
+            "Mean |SHAP|", ascending=False
+        )
 
-            # Create full importance table (not just top 10)
-            full_importance_df = pd.DataFrame(
-                list(mean_shap.items()), columns=["Feature", "Mean |SHAP|"]
-            )
-            full_importance_df = full_importance_df.sort_values(
-                "Mean |SHAP|", ascending=False
-            )
+        # Format as a readable table with feature descriptions
+        importance_table = "| Rank | Feature | Importance Score | Description |\n"
+        importance_table += "|------|---------|------------------|-------------|\n"
 
-            # Format as a readable table with feature descriptions
-            importance_table = "| Rank | Feature | Importance Score | Description |\n"
-            importance_table += "|------|---------|------------------|-------------|\n"
-
-            for idx, row in full_importance_df.iterrows():
-                rank = full_importance_df.index.tolist().index(idx) + 1
-                feature = row["Feature"]
-                score = row["Mean |SHAP|"]
-                description = feature_descriptions.get(feature, feature)
-                importance_table += (
-                    f"| {rank} | {feature} | {score:.4f} | {description} |\n"
-                )
-
-            # Fill in the template
-            filled_global_prompt = global_prompt_template.format(
-                feature_importance_table=importance_table
+        for idx, row in full_importance_df.iterrows():
+            rank = full_importance_df.index.tolist().index(idx) + 1
+            feature = row["Feature"]
+            score = row["Mean |SHAP|"]
+            description = feature_descriptions.get(feature, feature)
+            importance_table += (
+                f"| {rank} | {feature} | {score:.4f} | {description} |\n"
             )
 
-            # Display the prompt
-            st.markdown(
-                '<div class="prompt-box">'
-                + filled_global_prompt.replace("\n", "<br>")
-                + "</div>",
-                unsafe_allow_html=True,
+        # Fill in the template
+        filled_global_prompt = global_prompt_template.format(
+            feature_importance_table=importance_table
+        )
+
+        # Display the prompt
+        st.markdown(
+            '<div class="prompt-box">'
+            + filled_global_prompt.replace("\n", "<br>")
+            + "</div>",
+            unsafe_allow_html=True,
+        )
+
+        # Copy to clipboard functionality
+        escaped_global_prompt = (
+            filled_global_prompt.replace("\\", "\\\\")
+            .replace("`", "\\`")
+            .replace("$", "\\$")
+        )
+
+        copy_button_html_global = f"""
+        <button onclick="copyGlobalToClipboard()" style="
+            background-color: #3CAF50;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 1rem;
+        ">
+             Copy to Clipboard
+        </button>
+        <script>
+        function copyGlobalToClipboard() {{
+            const text = `{escaped_global_prompt}`;
+            navigator.clipboard.writeText(text).then(function() {{
+                alert(' Prompt copied to clipboard!');
+            }}, function(err) {{
+                alert(' Failed to copy.');
+            }});
+        }}
+        </script>
+        """
+        components.html(copy_button_html_global, height=50)
+
+        st.info(
+            " **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, etc.) to get a human-readable explanation of the global feature importance."
+        )
+
+        # Generate Explanation with OpenAI for Global Importance
+        st.markdown("---")
+        st.markdown(
+            '<div class="sub-header">🤖 AI-Generated Explanation</div>',
+            unsafe_allow_html=True,
+        )
+
+        if "openai_api_key" in st.session_state and st.session_state["openai_api_key"]:
+            if st.button(
+                "🚀 Generate Explanation with AI", type="primary", key="global_ai_btn"
+            ):
+                with st.spinner("Generating explanation..."):
+                    try:
+                        explanation = llm.generate_explanation(
+                            prompt=filled_global_prompt,
+                            api_key=st.session_state["openai_api_key"],
+                        )
+                        st.markdown("### Generated Explanation")
+                        st.markdown(explanation)
+                        st.success("✅ Explanation generated successfully!")
+                    except ValueError as e:
+                        st.error(f"❌ API Key Error: {str(e)}")
+                    except Exception as e:
+                        st.error(f"❌ Error generating explanation: {str(e)}")
+        else:
+            st.warning(
+                "⚠️ OpenAI API key required. Please configure your API key in the Settings tab to use this feature."
             )
 
-            # Copy to clipboard functionality
-            import streamlit.components.v1 as components
-
-            escaped_global_prompt = (
-                filled_global_prompt.replace("\\", "\\\\")
-                .replace("`", "\\`")
-                .replace("$", "\\$")
-            )
-
-            copy_button_html_global = f"""
-            <button onclick="copyGlobalToClipboard()" style="
-                background-color: #3CAF50;
-                color: white;
-                padding: 0.5rem 1rem;
-                border: none;
-                border-radius: 0.25rem;
-                cursor: pointer;
-                font-size: 1rem;
-                margin-top: 10px;
-            ">
-                 Copy Global Importance Prompt to Clipboard
-            </button>
-            <script>
-            function copyGlobalToClipboard() {{
-                const text = `{escaped_global_prompt}`;
-                navigator.clipboard.writeText(text).then(function() {{
-                    alert(' Global importance prompt copied to clipboard!');
-                }}, function(err) {{
-                    alert(' Failed to copy.');
-                }});
-            }}
-            </script>
-            """
-            components.html(copy_button_html_global, height=60)
-
-            st.info(
-                " **Tip**: Copy this prompt and paste it into your preferred LLM to get strategic insights about which features drive sales success globally."
-            )
-
-        except FileNotFoundError:
-            st.error(
-                " Global importance prompt template not found. Please ensure global_importance_prompt.txt exists."
-            )
+    except FileNotFoundError:
+        st.error(
+            " Global importance prompt template not found. Please ensure global_importance_prompt.txt exists."
+        )
 
 # Tab 3: Generate LLM Prompt
 with tab3:
@@ -656,6 +679,34 @@ with tab3:
         st.info(
             " **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, etc.) to get a human-readable explanation of this prediction."
         )
+
+        # Generate Explanation with OpenAI
+        st.markdown("---")
+        st.markdown(
+            '<div class="sub-header">🤖 AI-Generated Explanation</div>',
+            unsafe_allow_html=True,
+        )
+
+        if "openai_api_key" in st.session_state and st.session_state["openai_api_key"]:
+            if st.button("🚀 Generate Explanation with AI", type="primary"):
+                with st.spinner("Generating explanation..."):
+                    try:
+                        explanation = llm.generate_explanation(
+                            prompt=filled_prompt,
+                            api_key=st.session_state["openai_api_key"],
+                        )
+                        st.markdown("### Generated Explanation")
+                        st.markdown(explanation)
+                        st.success("✅ Explanation generated successfully!")
+                    except ValueError as e:
+                        st.error(f"❌ API Key Error: {str(e)}")
+                    except Exception as e:
+                        st.error(f"❌ Error generating explanation: {str(e)}")
+        else:
+            st.warning(
+                "⚠️ OpenAI API key required. Please configure your API key in the Settings tab to use this feature."
+            )
+
 
 # Tab 4: Model Performance Deep Dive
 with tab4:
@@ -1179,14 +1230,14 @@ with tab5:
     st.markdown(
         '<div class="sub-header"> Application Settings</div>', unsafe_allow_html=True
     )
-    
+
     st.markdown("### API Configuration")
 
     env_api_key = os.getenv("OPEN_AI_API_KEY", "")
     if env_api_key:
         st.info("ℹ️ OpenAI API key loaded from environment variable.")
-        st.session_state['openai_api_key'] = env_api_key
-    
+        st.session_state["openai_api_key"] = env_api_key
+
     else:
         st.warning(
             "⚠️ No OpenAI API key found in environment variables. Please enter your API key below to enable LLM features."
@@ -1199,21 +1250,23 @@ with tab5:
             placeholder="sk-...",
             help="Enter your OpenAI API key to enable LLM features. Your key is not stored permanently.",
         )
-        
+
         if api_key:
             st.success("API Key provided")
             # Store in session state for potential use
-            st.session_state['openai_api_key'] = api_key
+            st.session_state["openai_api_key"] = api_key
         else:
             st.info("ℹ️ No API key provided. Some features may be limited.")
-    
+
     st.markdown("---")
     st.markdown("### ℹ️ About")
-    st.write("This application provides explainability tools for sales opportunity predictions.")
+    st.write(
+        "This application provides explainability tools for sales opportunity predictions."
+    )
     st.write("**Version**: 1.0.0")
     st.write("**Model**: CatBoost Classifier")
     st.write("**Framework**: Streamlit + SHAP")
-    
+
 
 # Footer
 st.markdown("---")

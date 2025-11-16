@@ -11,3 +11,5 @@ pdpbox
 matplotlib
 optuna
 joblib
+openai
+python-dotenv
