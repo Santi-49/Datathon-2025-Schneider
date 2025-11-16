@@ -10,7 +10,7 @@ import openai
 
 def generate_explanation(
     prompt: str, api_key: Optional[str] = None, model: str = "gpt-3.5-turbo"
-) -> str:
+) -> str|None:
     """
     Generate an explanation using OpenAI API
 
