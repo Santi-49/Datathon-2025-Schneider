@@ -98,7 +98,7 @@ def load_data():
             predictions_detailed = json.load(f)
 
         # Load prompt template
-        with open("prompt_template.txt", "r") as f:
+        with open("templates/prompt_template.txt", "r") as f:
             prompt_template = f.read()
 
         # Load feature descriptions from PROJECT_INFO.md
@@ -357,7 +357,7 @@ with tab2:
     if st.button("🤖 Generate Global Importance Prompt"):
         # Load global importance prompt template
         try:
-            with open("global_importance_prompt.txt", "r") as f:
+            with open("templates/global_importance_prompt.txt", "r") as f:
                 global_prompt_template = f.read()
 
             # Create full importance table (not just top 10)
@@ -435,7 +435,11 @@ with tab2:
 
         except FileNotFoundError:
             st.error(
+<<<<<<< HEAD
                 " Global importance prompt template not found. Please ensure global_importance_prompt.txt exists."
+=======
+                "⚠️ Global importance prompt template not found. Please ensure templates/global_importance_prompt.txt exists."
+>>>>>>> bb8610ee1ccabe8437ba9616f5a4676c831e03b4
             )
 
 # Tab 3: Generate LLM Prompt
