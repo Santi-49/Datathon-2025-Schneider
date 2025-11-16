@@ -174,7 +174,7 @@ st.markdown(
     
     /* Tab styling */
     .stTabs [data-baseweb="tab-list"] {{
-        gap: 8px;
+        gap: 24px;
     }}
     
     .stTabs [data-baseweb="tab"] {{
@@ -182,6 +182,7 @@ st.markdown(
         border-radius: 8px 8px 0 0;
         color: #FFFFFF;
         font-weight: 600;
+        padding: 0.5rem 1rem;
     }}
     
     .stTabs [aria-selected="true"] {{
@@ -394,8 +395,8 @@ filtered_df = filtered_df[
 tab1, tab2, tab3, tab4, tab5 = st.tabs(
     [
         "Dataset Overview",
-        "Explore Predictions",
-        "Generate LLM Prompt",
+        "Global Feature Importance",
+        "Local Instance Explanations",
         "Model Performance",
         "Settings",
     ]
