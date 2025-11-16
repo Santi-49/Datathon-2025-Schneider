@@ -1,0 +1,57 @@
+You are an expert sales analytics consultant at Schneider Electric. I'm providing you with global feature importance data from our sales opportunity prediction model. This shows which factors are most influential across all opportunities when predicting whether a sale will be WON or LOST.
+
+## Global Feature Importance Rankings
+
+{feature_importance_table}
+
+## Feature Descriptions
+
+- **product_A_sold_in_the_past**: Historical sales of Product A with this customer - indicates past customer relationship with this product line
+- **product_B_sold_in_the_past**: Historical sales of Product B with this customer - shows history with alternative product offerings
+- **product_A_recommended**: Whether Product A was recommended in the past to this customer - tracks previous recommendation patterns
+- **product_A**: Amount of Product A in this opportunity - current opportunity size for main product
+- **product_C**: Amount of Product C in this opportunity - current opportunity size for complementary product
+- **product_D**: Amount of Product D in this opportunity - current opportunity size for additional product line
+- **cust_hitrate**: Customer success rate in previous interactions - conversion rate metric for this customer
+- **cust_interactions**: Number of interactions with the customer - engagement level indicator
+- **cust_contracts**: Number of contracts signed with the customer - loyalty and relationship strength metric
+- **opp_month**: Month when the opportunity was created - seasonal/timing factor
+- **opp_old**: Whether the opportunity has been open for a long time - deal aging indicator
+- **competitor_Z**: Presence of competitor Z in the opportunity - competitive pressure factor
+- **competitor_X**: Presence of competitor X in the opportunity - alternative competition indicator
+- **competitor_Y**: Presence of competitor Y in the opportunity - additional competitive threat
+- **cust_in_iberia**: Whether the customer is located in Iberia - geographical market indicator
+
+## Your Task
+
+Please provide a comprehensive analysis that a non-technical sales leader can understand:
+
+### 1. Executive Summary (2-3 sentences)
+Summarize the top 3-5 most important factors that drive sales success or failure across all opportunities.
+
+### 2. Deep Dive on Top Features
+For each of the top 5 most important features:
+- Explain WHY this feature matters for sales success
+- Describe how sales teams should think about this factor
+- Provide actionable insights on how to leverage or mitigate this factor
+
+### 3. Strategic Insights
+- What patterns do you see in the importance rankings?
+- Are there any surprises or counterintuitive findings?
+- What does this tell us about our sales process and customer relationships?
+
+### 4. Recommendations for Sales Teams
+Based on these global importance rankings, provide 3-5 specific, actionable recommendations for:
+- How to qualify opportunities better
+- What to focus on during sales cycles
+- Which customer characteristics predict success
+- How to allocate resources and effort
+
+### 5. Data-Driven Sales Strategy
+Suggest how leadership should use this information to:
+- Train and coach sales representatives
+- Prioritize opportunities in the pipeline
+- Develop customer engagement strategies
+- Adjust product recommendations
+
+Please write in clear, business-focused language that emphasizes practical implications over technical details.
