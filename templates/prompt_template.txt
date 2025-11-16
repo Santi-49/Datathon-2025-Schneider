@@ -15,16 +15,8 @@ Explain why the model made a specific prediction for a sales opportunity. Your e
 ## FEATURE VALUES
 {feature_values}
 
-## MODEL EXPLANATION (SHAP VALUES)
-SHAP values indicate how much each feature pushed the prediction toward WON (positive values) or LOST (negative values):
-
-{shap_explanation}
-
 **Base Prediction Rate**: {base_value:.1%} (average probability across all opportunities)
 **Final Prediction**: {prediction_probability:.1%}
-
-## TOP 5 MOST INFLUENTIAL FACTORS
-{top_factors}
 
 ## INSTRUCTIONS
 Provide a clear, business-focused explanation that addresses:

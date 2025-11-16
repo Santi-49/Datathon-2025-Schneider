@@ -32,6 +32,10 @@ env_api_key = os.getenv("OPEN_AI_API_KEY", "")
 if env_api_key:
     st.session_state["openai_api_key"] = env_api_key
 
+# Initialize session state variables
+if "TOP_N_FEATURES_IN_PROMPT" not in st.session_state:
+    st.session_state["TOP_N_FEATURES_IN_PROMPT"] = 5
+
 # Page configuration
 st.set_page_config(
     page_title="Schneider Electric | Sales Opportunity Explainability",
@@ -887,7 +891,6 @@ with tab3:
             feature_values=feature_values_text,
             shap_explanation=shap_explanation_text,
             base_value=instance["shap_base_value"],
-            top_factors=top_factors_text,
         )
 
         # Display prompt
@@ -1524,10 +1527,6 @@ with tab5:
     )
 
     st.markdown("### Prompt Configuration")
-
-    # Initialize session state for TOP_N_FEATURES_IN_PROMPT if not exists
-    if "TOP_N_FEATURES_IN_PROMPT" not in st.session_state:
-        st.session_state["TOP_N_FEATURES_IN_PROMPT"] = 5
 
     top_n_features = st.number_input(
         "Number of Top Features in Prompt",
