@@ -40,6 +40,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+
 # Helper function to load and encode image
 def get_base64_image(image_path):
     """Convert image to base64 for embedding in HTML"""
@@ -48,6 +49,7 @@ def get_base64_image(image_path):
             return base64.b64encode(img_file.read()).decode()
     except:
         return None
+
 
 # Load logo
 logo_base64 = get_base64_image("media/Schneider-Electric-logo-jpg-.png")
@@ -245,7 +247,7 @@ with col_title:
         '<p class="sub-title">AI-Powered Explainability Dashboard | Go-to-Market Analytics</p>',
         unsafe_allow_html=True,
     )
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 
 # Load data
@@ -321,10 +323,10 @@ st.sidebar.markdown("### 🎯 Filter Options")
 
 # Prediction filter
 prediction_filter = st.sidebar.multiselect(
-    " Prediction Outcome", 
-    options=["WON", "LOST"], 
+    " Prediction Outcome",
+    options=["WON", "LOST"],
     default=["WON", "LOST"],
-    help="Filter by predicted opportunity outcome"
+    help="Filter by predicted opportunity outcome",
 )
 
 # Correctness filter
@@ -332,17 +334,17 @@ correctness_filter = st.sidebar.multiselect(
     "✓ Prediction Accuracy",
     options=["Correct", "Incorrect"],
     default=["Correct", "Incorrect"],
-    help="Show only correct or incorrect predictions"
+    help="Show only correct or incorrect predictions",
 )
 
 # Confidence range
 confidence_range = st.sidebar.slider(
-    " Confidence Level (%)", 
-    min_value=0, 
-    max_value=100, 
-    value=(0, 100), 
+    " Confidence Level (%)",
+    min_value=0,
+    max_value=100,
+    value=(0, 100),
     step=5,
-    help="Filter by model prediction confidence"
+    help="Filter by model prediction confidence",
 )
 
 st.sidebar.markdown("---")
@@ -436,9 +438,7 @@ with tab1:
             color_discrete_sequence=["#FF5252", "#3DCD58"],
         )
         fig.update_layout(
-            title_font_color="#FFFFFF",
-            title_font_size=18,
-            legend_font_color="#FFFFFF"
+            title_font_color="#FFFFFF", title_font_size=18, legend_font_color="#FFFFFF"
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -456,7 +456,7 @@ with tab1:
             title_font_color="#FFFFFF",
             title_font_size=18,
             xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
-            yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF")
+            yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -484,7 +484,7 @@ with tab1:
         title_font_color="#FFFFFF",
         title_font_size=18,
         xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
-        yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF")
+        yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -560,7 +560,11 @@ with tab2:
         title_font_color="#FFFFFF",
         title_font_size=18,
         xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
-        yaxis=dict(categoryorder="total ascending", title_font_color="#FFFFFF", tickfont_color="#FFFFFF")
+        yaxis=dict(
+            categoryorder="total ascending",
+            title_font_color="#FFFFFF",
+            tickfont_color="#FFFFFF",
+        ),
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -803,8 +807,8 @@ with tab3:
             title_font_size=18,
             xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
             yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -906,7 +910,9 @@ with tab3:
         )
 
         if "openai_api_key" in st.session_state and st.session_state["openai_api_key"]:
-            if st.button("🚀 Generate Explanation with AI", type="primary", key="instance_ai_btn"):
+            if st.button(
+                "🚀 Generate Explanation with AI", type="primary", key="instance_ai_btn"
+            ):
                 with st.spinner("Generating explanation..."):
                     try:
                         explanation = llm.generate_explanation(
@@ -1024,7 +1030,7 @@ with tab4:
             title_font_color="#FFFFFF",
             title_font_size=18,
             xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
-            yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF")
+            yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -1123,8 +1129,8 @@ with tab4:
             xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
             yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
             legend=dict(font_color="#FFFFFF"),
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -1169,8 +1175,8 @@ with tab4:
             xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
             yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
             legend=dict(font_color="#FFFFFF"),
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -1257,8 +1263,8 @@ with tab4:
         xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
         yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
         legend=dict(font_color="#FFFFFF"),
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
     )
 
     st.plotly_chart(fig, use_container_width=True)
@@ -1463,8 +1469,8 @@ with tab4:
             xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
             yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
             legend=dict(font_color="#FFFFFF"),
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
         )
 
         st.plotly_chart(fig, use_container_width=True)
