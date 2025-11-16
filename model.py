@@ -223,24 +223,6 @@ def compute_and_save_shap(cat_model: CatBoostClassifier, X_test: pd.DataFrame) -
 
 
 # -------------------------
-# LIME explainability (single instance saved to HTML)
-# -------------------------
-def save_lime_example(X_train: pd.DataFrame, X_test: pd.DataFrame, cat_model: CatBoostClassifier, instance_idx: int = 0):
-    try:
-        explainer_lime = LimeTabularExplainer(
-            training_data=np.array(X_train),
-            feature_names=X_train.columns.tolist(),
-            class_names=["lost", "won"],
-            mode="classification",
-        )
-        exp = explainer_lime.explain_instance(X_test.iloc[instance_idx].to_numpy(), cat_model.predict_proba, num_features=8)
-        exp.save_to_file(os.path.join(MEDIA_DIR, "lime_example.html"))
-        print(f"[OK] Saved LIME example to: {os.path.join(MEDIA_DIR, 'lime_example.html')}")
-    except Exception as e:
-        print(f"[WARN] No se pudo generar LIME example: {e}")
-
-
-# -------------------------
 # PDP usando CatBoost (solución 1)
 # -------------------------
 def pdp_catboost_and_save(cat_model: CatBoostClassifier, X_ref: pd.DataFrame, top_features: List[str]):
@@ -376,9 +358,6 @@ def main():
 
     # SHAP
     shap_vals, expected_val, top_features_shap = compute_and_save_shap(cat_model, X_test)
-
-    # Guardar LIME (ejemplo local)
-    save_lime_example(X_train, X_test, cat_model, instance_idx=0)
 
     # PDP: usa CatBoost native method para las top-3 features (o top_features_shap[:3])
     top_for_pdp = top_features_shap[:3] if len(top_features_shap) >= 1 else list(X_test.columns[:3])
