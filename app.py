@@ -35,7 +35,9 @@ if env_api_key:
 # ============================================================================
 # CONFIGURATION: Number of top features to show in LLM prompt (by |SHAP| importance)
 # ============================================================================
-st.session_state["TOP_N_FEATURES_IN_PROMPT"] = 5  # Modify this value to change how many features appear in ##Feature Values section
+st.session_state["TOP_N_FEATURES_IN_PROMPT"] = (
+    5  # Modify this value to change how many features appear in ##Feature Values section
+)
 
 # Page configuration
 st.set_page_config(
@@ -830,11 +832,9 @@ with tab3:
 
         # Sort features by absolute SHAP impact and take top N
         sorted_features_by_shap = sorted(
-            instance["shap_values"].items(),
-            key=lambda x: abs(x[1]),
-            reverse=True
-        )[:st.session_state["TOP_N_FEATURES_IN_PROMPT"]]
-        
+            instance["shap_values"].items(), key=lambda x: abs(x[1]), reverse=True
+        )[: st.session_state["TOP_N_FEATURES_IN_PROMPT"]]
+
         # Get the feature names from top N
         top_n_feature_names = [feat for feat, _ in sorted_features_by_shap]
 
@@ -845,8 +845,10 @@ with tab3:
                 for k in top_n_feature_names
             ]
         )
-        
-        st.info(f"ℹ️ Showing top {len(top_n_feature_names)} most important features by |SHAP| value importance.")
+
+        st.info(
+            f"ℹ️ Showing top {len(top_n_feature_names)} most important features by |SHAP| value importance."
+        )
 
         # Format SHAP explanation
         shap_explanation_text = "\n".join(
@@ -864,14 +866,18 @@ with tab3:
         feature_values_text = ""
         top_factors_text = ""
         sorted_by_abs_shap = sorted(
-            instance["shap_values"].items(),
-            key=lambda x: abs(x[1]),
-            reverse=True
+            instance["shap_values"].items(), key=lambda x: abs(x[1]), reverse=True
         )
-        for i, (feat, val) in enumerate(sorted_by_abs_shap[:st.session_state["TOP_N_FEATURES_IN_PROMPT"]], 1):
+        for i, (feat, val) in enumerate(
+            sorted_by_abs_shap[: st.session_state["TOP_N_FEATURES_IN_PROMPT"]], 1
+        ):
             direction = "WON" if val > 0 else "LOST"
             description = feature_descriptions.get(feat, feat)
-            value_str = f"{instance['feature_values'][feat]:.4f}" if feat in instance['feature_values'] else ""
+            value_str = (
+                f"{instance['feature_values'][feat]:.4f}"
+                if feat in instance["feature_values"]
+                else ""
+            )
             shap_str = f"{val:+.4f}"
             explanation = f"{i}. **{description}**\n   - Feature Value: {value_str}\n   - SHAP Impact: {shap_str}\n   - This feature strongly pushes the prediction toward {direction}\n"
             feature_values_text += explanation + "\n"
@@ -937,7 +943,6 @@ with tab3:
         st.info(
             " **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, etc.) to get a human-readable explanation of this prediction."
         )
-
 
         # Generate Explanation with OpenAI
         st.markdown("---")
@@ -1588,4 +1593,3 @@ else:
         """,
         unsafe_allow_html=True,
     )
-
