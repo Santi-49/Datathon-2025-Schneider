@@ -80,7 +80,7 @@ st.markdown(
 )
 
 # Title
-st.markdown("## 🎯 Sales Opportunity Prediction Explainability")
+st.markdown("##  Sales Opportunity Prediction Explainability")
 st.markdown("**Schneider Electric - Go to Market Analytics**")
 st.markdown("---")
 
@@ -128,7 +128,7 @@ def load_data():
         )
     except FileNotFoundError as e:
         st.error(
-            f"⚠️ Required files not found. Please run temp.py first to generate predictions."
+            f" Required files not found. Please run temp.py first to generate predictions."
         )
         st.error(f"Error: {e}")
         return None, None, None, None
@@ -186,10 +186,10 @@ filtered_df = filtered_df[
 # Main content
 tab1, tab2, tab3, tab4 = st.tabs(
     [
-        "📊 Dataset Overview",
-        "🔎 Explore Predictions",
-        "💬 Generate LLM Prompt",
-        "📈 Model Performance",
+        " Dataset Overview",
+        " Explore Predictions",
+        " Generate LLM Prompt",
+        " Model Performance",
     ]
 )
 
@@ -346,7 +346,7 @@ with tab2:
     # Generate Global Importance Prompt
     st.markdown("---")
     st.markdown(
-        '<div class="sub-header">📊 Global Feature Importance Explanation</div>',
+        '<div class="sub-header"> Global Feature Importance Explanation</div>',
         unsafe_allow_html=True,
     )
 
@@ -414,15 +414,15 @@ with tab2:
                 font-size: 1rem;
                 margin-top: 10px;
             ">
-                📋 Copy Global Importance Prompt to Clipboard
+                 Copy Global Importance Prompt to Clipboard
             </button>
             <script>
             function copyGlobalToClipboard() {{
                 const text = `{escaped_global_prompt}`;
                 navigator.clipboard.writeText(text).then(function() {{
-                    alert('✅ Global importance prompt copied to clipboard!');
+                    alert(' Global importance prompt copied to clipboard!');
                 }}, function(err) {{
-                    alert('❌ Failed to copy.');
+                    alert(' Failed to copy.');
                 }});
             }}
             </script>
@@ -435,7 +435,7 @@ with tab2:
 
         except FileNotFoundError:
             st.error(
-                "⚠️ Global importance prompt template not found. Please ensure global_importance_prompt.txt exists."
+                " Global importance prompt template not found. Please ensure global_importance_prompt.txt exists."
             )
 
 # Tab 3: Generate LLM Prompt
@@ -564,7 +564,7 @@ with tab3:
         # Generate prompt
         st.markdown("---")
         st.markdown(
-            '<div class="sub-header">📝 Generated LLM Prompt</div>',
+            '<div class="sub-header"> Generated LLM Prompt</div>',
             unsafe_allow_html=True,
         )
 
@@ -631,15 +631,15 @@ with tab3:
             cursor: pointer;
             font-size: 1rem;
         ">
-            📋 Copy to Clipboard
+             Copy to Clipboard
         </button>
         <script>
         function copyToClipboard() {{
             const text = `{escaped_prompt}`;
             navigator.clipboard.writeText(text).then(function() {{
-                alert('✅ Prompt copied to clipboard!');
+                alert(' Prompt copied to clipboard!');
             }}, function(err) {{
-                alert('❌ Failed to copy.');
+                alert(' Failed to copy.');
             }});
         }}
         </script>
@@ -648,13 +648,13 @@ with tab3:
 
         # Additional info
         st.info(
-            "💡 **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, etc.) to get a human-readable explanation of this prediction."
+            " **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, etc.) to get a human-readable explanation of this prediction."
         )
 
 # Tab 4: Model Performance Deep Dive
 with tab4:
     st.markdown(
-        '<div class="sub-header">📈 Model Performance Deep Dive</div>',
+        '<div class="sub-header"> Model Performance Deep Dive</div>',
         unsafe_allow_html=True,
     )
 
@@ -671,7 +671,7 @@ with tab4:
     accuracy = (y_true == y_pred).mean()
 
     # Display key metrics
-    st.markdown("### 🎯 Classification Metrics")
+    st.markdown("###  Classification Metrics")
     col1, col2, col3, col4, col5, col6 = st.columns(6)
 
     with col1:
@@ -691,11 +691,11 @@ with tab4:
     # Performance benchmark info
     if f1 >= 0.7:
         st.success(
-            f"✅ **Model exceeds minimum requirement**: F1 Score {f1:.3f} ≥ 0.70 (project requirement)"
+            f" **Model exceeds minimum requirement**: F1 Score {f1:.3f} ≥ 0.70 (project requirement)"
         )
     else:
         st.warning(
-            f"⚠️ **Performance below target**: F1 Score {f1:.3f} < 0.70 (project requirement)"
+            f" **Performance below target**: F1 Score {f1:.3f} < 0.70 (project requirement)"
         )
 
     st.markdown("---")
@@ -795,7 +795,7 @@ with tab4:
     st.markdown("---")
 
     # ROC and Precision-Recall Curves
-    st.markdown("### 📉 Model Discrimination Curves")
+    st.markdown("###  Model Discrimination Curves")
 
     col1, col2 = st.columns(2)
 
@@ -881,7 +881,7 @@ with tab4:
     st.markdown("---")
 
     # Performance by Confidence Threshold
-    st.markdown("### 🎚️ Performance by Prediction Threshold")
+    st.markdown("###  Performance by Prediction Threshold")
 
     thresholds = np.arange(0.1, 1.0, 0.05)
     threshold_metrics = []
@@ -959,13 +959,13 @@ with tab4:
     st.plotly_chart(fig, use_container_width=True)
 
     st.info(
-        "💡 **Insight**: Adjusting the classification threshold can optimize for precision (fewer false positives) or recall (fewer false negatives) based on business needs."
+        " **Insight**: Adjusting the classification threshold can optimize for precision (fewer false positives) or recall (fewer false negatives) based on business needs."
     )
 
     st.markdown("---")
 
     # Performance Segmentation Analysis
-    st.markdown("### 🔍 Performance by Segments")
+    st.markdown("###  Performance by Segments")
 
     segment_option = st.selectbox(
         "Analyze performance by:",
@@ -1162,10 +1162,10 @@ with tab4:
     worst_segment = segments["F1"].idxmin()
 
     st.success(
-        f"✅ **Best Performance**: {best_segment} segment (F1 = {segments.loc[best_segment, 'F1']:.3f})"
+        f" **Best Performance**: {best_segment} segment (F1 = {segments.loc[best_segment, 'F1']:.3f})"
     )
     st.warning(
-        f"⚠️ **Needs Improvement**: {worst_segment} segment (F1 = {segments.loc[worst_segment, 'F1']:.3f})"
+        f" **Needs Improvement**: {worst_segment} segment (F1 = {segments.loc[worst_segment, 'F1']:.3f})"
     )
 
 # Footer
