@@ -21,73 +21,225 @@ from sklearn.metrics import (
 )
 import dotenv
 import os
+import base64
 
 # Load environment variables
 dotenv.load_dotenv()
 
 # Page configuration
 st.set_page_config(
-    page_title="Sales Opportunity Explainability",
-    page_icon="📊",
+    page_title="Schneider Electric | Sales Opportunity Explainability",
+    page_icon="media/Schneider-Electric-logo-jpg-.png",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# Custom CSS
+# Helper function to load and encode image
+def get_base64_image(image_path):
+    """Convert image to base64 for embedding in HTML"""
+    try:
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode()
+    except:
+        return None
+
+# Load logo
+logo_base64 = get_base64_image("media/Schneider-Electric-logo-jpg-.png")
+
+# Custom CSS - Schneider Electric branded
 st.markdown(
-    """
+    f"""
 <style>
-    .main-header {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #3CAF50;
+    /* Schneider Electric Brand Colors */
+    :root {{
+        --se-green: #3DCD58;
+        --se-dark-green: #009530;
+        --se-light-green: #7FE89A;
+        --se-gray: #4A4A4A;
+        --se-light-gray: #F0F2F6;
+    }}
+    
+    /* Main headers - White for dark mode */
+    .main-header {{
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #FFFFFF !important;
         text-align: center;
+        margin-bottom: 0.5rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }}
+    
+    .sub-title {{
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: #FFFFFF !important;
+        text-align: center;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }}
+    
+    /* Sub-headers - White for dark mode */
+    .sub-header {{
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #FFFFFF !important;
+        margin-top: 2rem;
         margin-bottom: 1rem;
-    }
-    .sub-header {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #2E7D32;
+        border-left: 5px solid #3DCD58;
+        padding-left: 15px;
+    }}
+    
+    .section-header {{
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #FFFFFF !important;
         margin-top: 1.5rem;
-    }
-    .metric-card {
-        background-color: #f0f2f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        border-left: 4px solid #3CAF50;
-    }
-    .prompt-box {
-        background-color: #f8f9fa;
+        margin-bottom: 1rem;
+    }}
+    
+    /* Metric cards with Schneider branding */
+    .metric-card {{
+        background: linear-gradient(135deg, rgba(61, 205, 88, 0.1) 0%, rgba(0, 149, 48, 0.1) 100%);
+        padding: 1.2rem;
+        border-radius: 10px;
+        border-left: 5px solid #3DCD58;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }}
+    
+    /* Prompt box styling */
+    .prompt-box {{
+        background-color: rgba(42, 42, 42, 0.8);
         padding: 1.5rem;
-        border-radius: 0.5rem;
-        border: 2px solid #3CAF50;
-        font-family: monospace;
+        border-radius: 10px;
+        border: 2px solid #3DCD58;
+        font-family: 'Courier New', monospace;
         white-space: pre-wrap;
         font-size: 0.9rem;
         line-height: 1.6;
-        color: #1a1a1a;
-    }
-    .feature-value {
-        font-weight: bold;
-        color: #1976D2;
-    }
-    .shap-positive {
-        color: #2E7D32;
-        font-weight: bold;
-    }
-    .shap-negative {
-        color: #C62828;
-        font-weight: bold;
-    }
+        color: #FFFFFF;
+        box-shadow: 0 4px 12px rgba(61, 205, 88, 0.2);
+    }}
+    
+    /* Feature values */
+    .feature-value {{
+        font-weight: 600;
+        color: #3DCD58;
+    }}
+    
+    /* SHAP value colors */
+    .shap-positive {{
+        color: #3DCD58;
+        font-weight: 700;
+    }}
+    
+    .shap-negative {{
+        color: #FF5252;
+        font-weight: 700;
+    }}
+    
+    /* Sidebar styling */
+    [data-testid="stSidebar"] {{
+        background: linear-gradient(180deg, rgba(61, 205, 88, 0.05) 0%, rgba(0, 149, 48, 0.05) 100%);
+    }}
+    
+    /* Button styling */
+    .stButton>button {{
+        background-color: #3DCD58;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }}
+    
+    .stButton>button:hover {{
+        background-color: #009530;
+        box-shadow: 0 4px 12px rgba(61, 205, 88, 0.3);
+        transform: translateY(-2px);
+    }}
+    
+    /* Tab styling */
+    .stTabs [data-baseweb="tab-list"] {{
+        gap: 8px;
+    }}
+    
+    .stTabs [data-baseweb="tab"] {{
+        background-color: transparent;
+        border-radius: 8px 8px 0 0;
+        color: #FFFFFF;
+        font-weight: 600;
+    }}
+    
+    .stTabs [aria-selected="true"] {{
+        background-color: rgba(61, 205, 88, 0.2);
+        border-bottom: 3px solid #3DCD58;
+    }}
+    
+    /* Metrics styling */
+    [data-testid="stMetricValue"] {{
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #3DCD58;
+    }}
+    
+    [data-testid="stMetricLabel"] {{
+        color: #FFFFFF !important;
+        font-weight: 600;
+    }}
+    
+    /* Dataframe styling */
+    .dataframe {{
+        border-radius: 10px;
+        overflow: hidden;
+    }}
+    
+    /* Header container */
+    .header-container {{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0 1.5rem 0;
+        background: linear-gradient(135deg, rgba(61, 205, 88, 0.1) 0%, rgba(0, 149, 48, 0.1) 100%);
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }}
+    
+    .logo-container {{
+        text-align: center;
+        margin-bottom: 1rem;
+    }}
+    
+    /* Info boxes */
+    .stAlert {{
+        border-radius: 10px;
+        border-left: 5px solid #3DCD58;
+    }}
 </style>
 """,
     unsafe_allow_html=True,
 )
 
-# Title
-st.markdown("##  Sales Opportunity Prediction Explainability")
-st.markdown("**Schneider Electric - Go to Market Analytics**")
-st.markdown("---")
+# Header with logo
+st.markdown('<div class="header-container">', unsafe_allow_html=True)
+col_logo, col_title = st.columns([1, 4])
+with col_logo:
+    if logo_base64:
+        st.markdown(
+            f'<div class="logo-container"><img src="data:image/png;base64,{logo_base64}" width="120"></div>',
+            unsafe_allow_html=True,
+        )
+with col_title:
+    st.markdown(
+        '<h1 class="main-header">Sales Opportunity Prediction</h1>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<p class="sub-title">AI-Powered Explainability Dashboard | Go-to-Market Analytics</p>',
+        unsafe_allow_html=True,
+    )
+st.markdown('</div>', unsafe_allow_html=True)
 
 
 # Load data
@@ -146,24 +298,59 @@ predictions_df, predictions_detailed, prompt_template, feature_descriptions = (
 if predictions_df is None:
     st.stop()
 
-# Sidebar filters
-st.sidebar.header(" Filter Options")
+# Sidebar filters with enhanced branding
+st.sidebar.markdown(
+    """
+    <div style='text-align: center; padding: 1rem 0; margin-bottom: 1rem;'>
+        <h1 style='color: #3DCD58; font-size: 2.5rem; margin: 0;'>⚡</h1>
+        <h3 style='color: #3DCD58; margin: 0.5rem 0;'>AI Control Panel</h3>
+        <p style='color: #AAAAAA; font-size: 0.9rem; margin: 0;'>Schneider Electric</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 🎯 Filter Options")
 
 # Prediction filter
 prediction_filter = st.sidebar.multiselect(
-    "Prediction", options=["WON", "LOST"], default=["WON", "LOST"]
+    " Prediction Outcome", 
+    options=["WON", "LOST"], 
+    default=["WON", "LOST"],
+    help="Filter by predicted opportunity outcome"
 )
 
 # Correctness filter
 correctness_filter = st.sidebar.multiselect(
-    "Prediction Correctness",
+    "✓ Prediction Accuracy",
     options=["Correct", "Incorrect"],
     default=["Correct", "Incorrect"],
+    help="Show only correct or incorrect predictions"
 )
 
 # Confidence range
 confidence_range = st.sidebar.slider(
-    "Prediction Confidence (%)", min_value=0, max_value=100, value=(0, 100), step=5
+    " Confidence Level (%)", 
+    min_value=0, 
+    max_value=100, 
+    value=(0, 100), 
+    step=5,
+    help="Filter by model prediction confidence"
+)
+
+st.sidebar.markdown("---")
+st.sidebar.markdown(
+    """
+    <div style='text-align: center; color: #AAAAAA; font-size: 0.85rem; padding: 1rem;'>
+        <p><strong style='color: #3DCD58;'>Life Is On</strong></p>
+        <p>🌍 Sustainability in Action</p>
+        <p style='font-size: 0.75rem; margin-top: 0.5rem;'>
+            Driving efficiency through<br>intelligent analytics
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
 # Apply filters
@@ -188,14 +375,14 @@ filtered_df = filtered_df[
     & (filtered_df["prediction_probability"] * 100 <= confidence_range[1])
 ]
 
-# Main content
+# Main content with enhanced tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs(
     [
-        "Dataset Overview",
-        "Explore Predictions",
-        "Generate LLM Prompt",
-        "Model Performance",
-        "Settings"
+        " Dataset Overview",
+        " Explore Predictions",
+        " Generate AI Prompt",
+        " Model Performance",
+        " Settings"
     ]
 )
 
@@ -240,7 +427,12 @@ with tab1:
             values=pred_dist.values,
             names=["LOST", "WON"],
             title="Prediction Distribution",
-            color_discrete_sequence=["#C62828", "#2E7D32"],
+            color_discrete_sequence=["#FF5252", "#3DCD58"],
+        )
+        fig.update_layout(
+            title_font_color="#FFFFFF",
+            title_font_size=18,
+            legend_font_color="#FFFFFF"
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -252,7 +444,13 @@ with tab1:
             nbins=30,
             title="Prediction Confidence Distribution",
             labels={"prediction_probability": "Confidence"},
-            color_discrete_sequence=["#1976D2"],
+            color_discrete_sequence=["#3DCD58"],
+        )
+        fig.update_layout(
+            title_font_color="#FFFFFF",
+            title_font_size=18,
+            xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+            yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF")
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -272,9 +470,15 @@ with tab1:
         confusion_data,
         text_auto=True,
         aspect="auto",
-        color_continuous_scale="Greens",
+        color_continuous_scale=[[0, "#1a472a"], [0.5, "#3DCD58"], [1, "#7FE89A"]],
         labels=dict(x="Predicted", y="Actual"),
         title="Model Performance",
+    )
+    fig.update_layout(
+        title_font_color="#FFFFFF",
+        title_font_size=18,
+        xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+        yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF")
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -344,9 +548,14 @@ with tab2:
         orientation="h",
         title="Top 10 Most Important Features",
         color="Mean |SHAP|",
-        color_continuous_scale="Viridis",
+        color_continuous_scale=[[0, "#009530"], [0.5, "#3DCD58"], [1, "#7FE89A"]],
     )
-    fig.update_layout(yaxis={"categoryorder": "total ascending"})
+    fig.update_layout(
+        title_font_color="#FFFFFF",
+        title_font_size=18,
+        xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+        yaxis=dict(categoryorder="total ascending", title_font_color="#FFFFFF", tickfont_color="#FFFFFF")
+    )
     st.plotly_chart(fig, use_container_width=True)
 
     # Generate Global Importance Prompt
@@ -411,31 +620,35 @@ with tab2:
 
             copy_button_html_global = f"""
             <button onclick="copyGlobalToClipboard()" style="
-                background-color: #3CAF50;
+                background: linear-gradient(135deg, #3DCD58 0%, #009530 100%);
                 color: white;
-                padding: 0.5rem 1rem;
+                padding: 0.75rem 1.5rem;
                 border: none;
-                border-radius: 0.25rem;
+                border-radius: 8px;
                 cursor: pointer;
                 font-size: 1rem;
-                margin-top: 10px;
-            ">
+                font-weight: 600;
+                margin-top: 15px;
+                box-shadow: 0 4px 12px rgba(61, 205, 88, 0.3);
+                transition: all 0.3s ease;
+            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(61, 205, 88, 0.4)'"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(61, 205, 88, 0.3)'">
                  Copy Global Importance Prompt to Clipboard
             </button>
             <script>
             function copyGlobalToClipboard() {{
                 const text = `{escaped_global_prompt}`;
                 navigator.clipboard.writeText(text).then(function() {{
-                    alert(' Global importance prompt copied to clipboard!');
+                    alert('✅ Global importance prompt copied to clipboard!');
                 }}, function(err) {{
-                    alert(' Failed to copy.');
+                    alert('❌ Failed to copy.');
                 }});
             }}
             </script>
             """
-            components.html(copy_button_html_global, height=60)
+            components.html(copy_button_html_global, height=70)
 
-            st.info(
+            st.success(
                 " **Tip**: Copy this prompt and paste it into your preferred LLM to get strategic insights about which features drive sales success globally."
             )
 
@@ -544,7 +757,7 @@ with tab3:
 
         fig = go.Figure()
 
-        colors = ["#C62828" if x < 0 else "#2E7D32" for x in shap_data["SHAP Value"]]
+        colors = ["#FF5252" if x < 0 else "#3DCD58" for x in shap_data["SHAP Value"]]
 
         fig.add_trace(
             go.Bar(
@@ -563,6 +776,12 @@ with tab3:
             yaxis_title="Feature",
             height=500,
             showlegend=False,
+            title_font_color="#FFFFFF",
+            title_font_size=18,
+            xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+            yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -629,32 +848,36 @@ with tab3:
 
         copy_button_html = f"""
         <button onclick="copyToClipboard()" style="
-            background-color: #3CAF50;
+            background: linear-gradient(135deg, #3DCD58 0%, #009530 100%);
             color: white;
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 2rem;
             border: none;
-            border-radius: 0.25rem;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1rem;
-        ">
-             Copy to Clipboard
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(61, 205, 88, 0.3);
+            transition: all 0.3s ease;
+        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(61, 205, 88, 0.4)'"
+           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(61, 205, 88, 0.3)'">
+             Copy Prompt to Clipboard
         </button>
         <script>
         function copyToClipboard() {{
             const text = `{escaped_prompt}`;
             navigator.clipboard.writeText(text).then(function() {{
-                alert(' Prompt copied to clipboard!');
+                alert('✅ Prompt copied to clipboard!');
             }}, function(err) {{
-                alert(' Failed to copy.');
+                alert('❌ Failed to copy.');
             }});
         }}
         </script>
         """
-        components.html(copy_button_html, height=50)
+        components.html(copy_button_html, height=60)
 
         # Additional info
-        st.info(
-            " **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, etc.) to get a human-readable explanation of this prediction."
+        st.success(
+            "💡 **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, Gemini, etc.) to get a human-readable explanation of this prediction."
         )
 
 # Tab 4: Model Performance Deep Dive
@@ -737,8 +960,8 @@ with tab4:
                 y=confusion_data.index,
                 text=np.array(annotations).reshape(confusion_data.shape),
                 texttemplate="%{text}",
-                textfont={"size": 14},
-                colorscale="Greens",
+                textfont={"size": 14, "color": "white"},
+                colorscale=[[0, "#1a472a"], [0.5, "#3DCD58"], [1, "#7FE89A"]],
                 showscale=True,
             )
         )
@@ -748,6 +971,10 @@ with tab4:
             xaxis_title="Predicted",
             yaxis_title="Actual",
             height=400,
+            title_font_color="#FFFFFF",
+            title_font_size=18,
+            xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+            yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF")
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -818,7 +1045,7 @@ with tab4:
                 y=tpr,
                 mode="lines",
                 name=f"ROC (AUC = {roc_auc:.3f})",
-                line=dict(color="#2E7D32", width=3),
+                line=dict(color="#3DCD58", width=3),
                 hovertemplate="FPR: %{x:.3f}<br>TPR: %{y:.3f}<extra></extra>",
             )
         )
@@ -841,6 +1068,13 @@ with tab4:
             yaxis_title="True Positive Rate (Recall)",
             height=400,
             hovermode="closest",
+            title_font_color="#FFFFFF",
+            title_font_size=18,
+            xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+            yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+            legend=dict(font_color="#FFFFFF"),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -857,7 +1091,7 @@ with tab4:
                 y=prec,
                 mode="lines",
                 name=f"PR Curve (AP = {avg_precision:.3f})",
-                line=dict(color="#1976D2", width=3),
+                line=dict(color="#3DCD58", width=3),
                 hovertemplate="Recall: %{x:.3f}<br>Precision: %{y:.3f}<extra></extra>",
             )
         )
@@ -880,6 +1114,13 @@ with tab4:
             yaxis_title="Precision",
             height=400,
             hovermode="closest",
+            title_font_color="#FFFFFF",
+            title_font_size=18,
+            xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+            yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+            legend=dict(font_color="#FFFFFF"),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -920,7 +1161,7 @@ with tab4:
             y=threshold_df["F1"],
             mode="lines+markers",
             name="F1 Score",
-            line=dict(color="#2E7D32", width=2),
+            line=dict(color="#3DCD58", width=2),
         )
     )
 
@@ -930,7 +1171,7 @@ with tab4:
             y=threshold_df["Precision"],
             mode="lines+markers",
             name="Precision",
-            line=dict(color="#1976D2", width=2),
+            line=dict(color="#009530", width=2),
         )
     )
 
@@ -940,7 +1181,7 @@ with tab4:
             y=threshold_df["Recall"],
             mode="lines+markers",
             name="Recall",
-            line=dict(color="#F57C00", width=2),
+            line=dict(color="#7FE89A", width=2),
         )
     )
 
@@ -949,9 +1190,10 @@ with tab4:
     fig.add_vline(
         x=0.5,
         line_dash="dash",
-        line_color="red",
+        line_color="#FF5252",
         annotation_text="Current (0.5)",
         annotation_position="top",
+        annotation_font_color="#FFFFFF",
     )
 
     fig.update_layout(
@@ -960,6 +1202,13 @@ with tab4:
         yaxis_title="Score",
         height=400,
         hovermode="x unified",
+        title_font_color="#FFFFFF",
+        title_font_size=18,
+        xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+        yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+        legend=dict(font_color="#FFFFFF"),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
     )
 
     st.plotly_chart(fig, use_container_width=True)
@@ -1140,7 +1389,7 @@ with tab4:
                 x=segments.index,
                 y=segments["F1"],
                 name="F1 Score",
-                marker_color="#2E7D32",
+                marker_color="#3DCD58",
             )
         )
 
@@ -1149,7 +1398,7 @@ with tab4:
                 x=segments.index,
                 y=segments["Accuracy"],
                 name="Accuracy",
-                marker_color="#1976D2",
+                marker_color="#009530",
             )
         )
 
@@ -1159,6 +1408,13 @@ with tab4:
             yaxis_title="Score",
             barmode="group",
             height=400,
+            title_font_color="#FFFFFF",
+            title_font_size=18,
+            xaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+            yaxis=dict(title_font_color="#FFFFFF", tickfont_color="#FFFFFF"),
+            legend=dict(font_color="#FFFFFF"),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
         )
 
         st.plotly_chart(fig, use_container_width=True)
@@ -1180,16 +1436,16 @@ with tab5:
         '<div class="sub-header"> Application Settings</div>', unsafe_allow_html=True
     )
     
-    st.markdown("### API Configuration")
+    st.markdown('<div class="section-header"> API Configuration</div>', unsafe_allow_html=True)
 
     env_api_key = os.getenv("OPEN_AI_API_KEY", "")
     if env_api_key:
-        st.info("ℹ️ OpenAI API key loaded from environment variable.")
+        st.info(" OpenAI API key loaded from environment variable.")
         st.session_state['openai_api_key'] = env_api_key
     
     else:
         st.warning(
-            "⚠️ No OpenAI API key found in environment variables. Please enter your API key below to enable LLM features."
+            " No OpenAI API key found in environment variables. Please enter your API key below to enable LLM features."
         )
 
         # OpenAI API Key input
@@ -1201,26 +1457,91 @@ with tab5:
         )
         
         if api_key:
-            st.success("API Key provided")
+            st.success(" API Key provided")
             # Store in session state for potential use
             st.session_state['openai_api_key'] = api_key
         else:
-            st.info("ℹ️ No API key provided. Some features may be limited.")
+            st.info(" No API key provided. Some features may be limited.")
     
     st.markdown("---")
-    st.markdown("### ℹ️ About")
-    st.write("This application provides explainability tools for sales opportunity predictions.")
-    st.write("**Version**: 1.0.0")
-    st.write("**Model**: CatBoost Classifier")
-    st.write("**Framework**: Streamlit + SHAP")
+    st.markdown('<div class="section-header"> About This Application</div>', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, rgba(61, 205, 88, 0.1) 0%, rgba(0, 149, 48, 0.1) 100%); 
+                    padding: 1.5rem; border-radius: 10px; border-left: 5px solid #3DCD58;'>
+            <h4 style='color: #FFFFFF; margin-top: 0;'> Application Info</h4>
+            <p style='color: #FFFFFF; opacity: 0.9;'><strong>Purpose:</strong> AI-powered sales opportunity explainability</p>
+            <p style='color: #FFFFFF; opacity: 0.9;'><strong>Version:</strong> 1.0.0</p>
+            <p style='color: #FFFFFF; opacity: 0.9;'><strong>Framework:</strong> Streamlit + SHAP</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style='background: linear-gradient(135deg, rgba(61, 205, 88, 0.1) 0%, rgba(0, 149, 48, 0.1) 100%); 
+                    padding: 1.5rem; border-radius: 10px; border-left: 5px solid #3DCD58;'>
+            <h4 style='color: #FFFFFF; margin-top: 0;'> Model Info</h4>
+            <p style='color: #FFFFFF; opacity: 0.9;'><strong>Algorithm:</strong> CatBoost Classifier</p>
+            <p style='color: #FFFFFF; opacity: 0.9;'><strong>Explainability:</strong> SHAP Values</p>
+            <p style='color: #FFFFFF; opacity: 0.9;'><strong>Target:</strong> Sales Opportunity Win/Loss</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    st.markdown('<div class="section-header">🎯 Key Features</div>', unsafe_allow_html=True)
+    
+    features_html = """
+    <div style='display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem;'>
+        <div style='background: rgba(61, 205, 88, 0.05); padding: 1rem; border-radius: 8px; border: 1px solid rgba(61, 205, 88, 0.3);'>
+            <h5 style='color: #3DCD58; margin-top: 0;'> Dataset Overview</h5>
+            <p style='color: #FFFFFF; font-size: 0.9rem; opacity: 0.8;'>Comprehensive statistics and visualizations of predictions</p>
+        </div>
+        <div style='background: rgba(61, 205, 88, 0.05); padding: 1rem; border-radius: 8px; border: 1px solid rgba(61, 205, 88, 0.3);'>
+            <h5 style='color: #3DCD58; margin-top: 0;'> Prediction Explorer</h5>
+            <p style='color: #FFFFFF; font-size: 0.9rem; opacity: 0.8;'>Filter and analyze individual predictions with SHAP</p>
+        </div>
+        <div style='background: rgba(61, 205, 88, 0.05); padding: 1rem; border-radius: 8px; border: 1px solid rgba(61, 205, 88, 0.3);'>
+            <h5 style='color: #3DCD58; margin-top: 0;'> LLM Prompt Generation</h5>
+            <p style='color: #FFFFFF; font-size: 0.9rem; opacity: 0.8;'>Generate human-readable explanations for any prediction</p>
+        </div>
+        <div style='background: rgba(61, 205, 88, 0.05); padding: 1rem; border-radius: 8px; border: 1px solid rgba(61, 205, 88, 0.3);'>
+            <h5 style='color: #3DCD58; margin-top: 0;'> Performance Metrics</h5>
+            <p style='color: #FFFFFF; font-size: 0.9rem; opacity: 0.8;'>Deep dive into model performance with ROC, PR curves, and more</p>
+        </div>
+    </div>
+    """
+    st.markdown(features_html, unsafe_allow_html=True)
     
 
-# Footer
+# Enhanced Footer
 st.markdown("---")
-st.markdown(
-    "<div style='text-align: center; color: #666;'>"
-    "Schneider Electric - GTM Machine Learning Explainability | "
-    "Built with Streamlit 🚀"
-    "</div>",
-    unsafe_allow_html=True,
-)
+if logo_base64:
+    st.markdown(
+        f"""
+        <div style='text-align: center; padding: 2rem 0; background: linear-gradient(135deg, rgba(12, 35, 64, 0.3) 0%, rgba(0, 77, 38, 0.3) 100%); border-radius: 1rem; margin-top: 2rem;'>
+            <img src="data:image/png;base64,{logo_base64}" width="100" style="margin-bottom: 1rem;">
+            <h3 style='color: #3DCD58; margin-bottom: 1rem; font-weight: 700;'>⚡ Schneider Electric</h3>
+            <p style='color: #FFFFFF; font-size: 1.2rem; margin-bottom: 0.5rem;'><strong>Life Is On</strong></p>
+            <p style='color: #AAAAAA; font-size: 0.95rem; margin-bottom: 0.5rem;'>AI-Powered Sales Intelligence Platform</p>
+            <p style='color: #3DCD58; font-size: 0.85rem; margin: 0;'>Driving efficiency and sustainability through intelligent analytics 🌍</p>
+            <p style='color: #777; font-size: 0.75rem; margin-top: 1rem;'>Built by Quick2 with Streamlit</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+else:
+    st.markdown(
+        """
+        <div style='text-align: center; padding: 2rem 0; background: linear-gradient(135deg, rgba(12, 35, 64, 0.3) 0%, rgba(0, 77, 38, 0.3) 100%); border-radius: 1rem; margin-top: 2rem;'>
+            <h3 style='color: #3DCD58; margin-bottom: 1rem; font-weight: 700;'>⚡ Schneider Electric</h3>
+            <p style='color: #FFFFFF; font-size: 1.2rem; margin-bottom: 0.5rem;'><strong>Life Is On</strong></p>
+            <p style='color: #AAAAAA; font-size: 0.95rem; margin-bottom: 0.5rem;'>AI-Powered Sales Intelligence Platform</p>
+            <p style='color: #3DCD58; font-size: 0.85rem; margin: 0;'>Driving efficiency and sustainability through intelligent analytics 🌍</p>
+            <p style='color: #777; font-size: 0.75rem; margin-top: 1rem;'>Built by Quick2 with Streamlit</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
