@@ -30,7 +30,6 @@ dotenv.load_dotenv()
 
 env_api_key = os.getenv("OPEN_AI_API_KEY", "")
 if env_api_key:
-    st.info("ℹ️ OpenAI API key loaded from environment variable.")
     st.session_state["openai_api_key"] = env_api_key
 
 # Page configuration
@@ -899,11 +898,6 @@ with tab3:
         """
         components.html(copy_button_html, height=60)
 
-        # Additional info
-        st.success(
-            "💡 **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, Gemini, etc.) to get a human-readable explanation of this prediction."
-        )
-
         # Generate Explanation with OpenAI
         st.markdown("---")
         st.markdown(
@@ -912,7 +906,7 @@ with tab3:
         )
 
         if "openai_api_key" in st.session_state and st.session_state["openai_api_key"]:
-            if st.button("🚀 Generate Explanation with AI", type="primary"):
+            if st.button("🚀 Generate Explanation with AI", type="primary", key="instance_ai_btn"):
                 with st.spinner("Generating explanation..."):
                     try:
                         explanation = llm.generate_explanation(
@@ -931,33 +925,9 @@ with tab3:
                 "⚠️ OpenAI API key required. Please configure your API key in the Settings tab to use this feature."
             )
 
-
-        # Generate Explanation with OpenAI
-        st.markdown("---")
-        st.markdown(
-            '<div class="sub-header">🤖 AI-Generated Explanation</div>',
-            unsafe_allow_html=True,
+        st.info(
+            " **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, etc.) to get a human-readable explanation of this prediction."
         )
-
-        if "openai_api_key" in st.session_state and st.session_state["openai_api_key"]:
-            if st.button("🚀 Generate Explanation with AI", type="primary"):
-                with st.spinner("Generating explanation..."):
-                    try:
-                        explanation = llm.generate_explanation(
-                            prompt=filled_prompt,
-                            api_key=st.session_state["openai_api_key"],
-                        )
-                        st.markdown("### Generated Explanation")
-                        st.markdown(explanation)
-                        st.success("✅ Explanation generated successfully!")
-                    except ValueError as e:
-                        st.error(f"❌ API Key Error: {str(e)}")
-                    except Exception as e:
-                        st.error(f"❌ Error generating explanation: {str(e)}")
-        else:
-            st.warning(
-                "⚠️ OpenAI API key required. Please configure your API key in the Settings tab to use this feature."
-            )
 
 
 # Tab 4: Model Performance Deep Dive
@@ -1518,6 +1488,8 @@ with tab5:
 
     st.markdown("### API Configuration")
 
+    if "openai_api_key" in st.session_state and st.session_state["openai_api_key"]:
+        st.info("ℹ️ OpenAI API key loaded from environment variable.")
     else:
         st.warning(
             " No OpenAI API key found in environment variables. Please enter your API key below to enable LLM features."
