@@ -23,7 +23,7 @@ from sklearn.metrics import (
 # ============================================================================
 # CONFIGURATION: Number of top features to show in LLM prompt (by |SHAP| importance)
 # ============================================================================
-st.session_state["TOP_N_FEATURES_IN_PROMPT"] = 15  # Modify this value to change how many features appear in ##Feature Values section
+st.session_state["TOP_N_FEATURES_IN_PROMPT"] = 5  # Modify this value to change how many features appear in ##Feature Values section
 
 # Page configuration
 st.set_page_config(
@@ -605,11 +605,23 @@ with tab3:
             ]
         )
 
-        # Format top factors
+        # Combine feature value and impact explanation (ordered by descending |SHAP| value)
+        feature_values_text = ""
         top_factors_text = ""
-        for i, (feat, val) in enumerate(instance["top_absolute_features"][:5], 1):
+        sorted_by_abs_shap = sorted(
+            instance["shap_values"].items(),
+            key=lambda x: abs(x[1]),
+            reverse=True
+        )
+        for i, (feat, val) in enumerate(sorted_by_abs_shap[:st.session_state["TOP_N_FEATURES_IN_PROMPT"]], 1):
             direction = "WON" if val > 0 else "LOST"
-            top_factors_text += f"{i}. **{feature_descriptions.get(feat, feat)}** (SHAP: {val:+.4f})\n   - This feature strongly pushes the prediction toward {direction}\n\n"
+            description = feature_descriptions.get(feat, feat)
+            value_str = f"{instance['feature_values'][feat]:.4f}" if feat in instance['feature_values'] else ""
+            shap_str = f"{val:+.4f}"
+            explanation = f"{i}. **{description}**\n   - Feature Value: {value_str}\n   - SHAP Impact: {shap_str}\n   - This feature strongly pushes the prediction toward {direction}\n"
+            feature_values_text += explanation + "\n"
+            if i <= 5:
+                top_factors_text += f"{i}. **{description}** (SHAP: {shap_str})\n   - This feature strongly pushes the prediction toward {direction}\n\n"
 
         # Fill in the template
         filled_prompt = prompt_template.format(
