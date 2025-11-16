@@ -904,6 +904,11 @@ with tab3:
         """
         components.html(copy_button_html, height=60)
 
+        st.info(
+            " **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, etc.) to get a human-readable explanation of this prediction."
+        )
+
+
         # Generate Explanation with OpenAI
         st.markdown("---")
         st.markdown(
@@ -932,10 +937,6 @@ with tab3:
             st.warning(
                 "⚠️ OpenAI API key required. Please configure your API key in the Settings tab to use this feature."
             )
-
-        st.info(
-            " **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, etc.) to get a human-readable explanation of this prediction."
-        )
 
 
 # Tab 4: Model Performance Deep Dive
