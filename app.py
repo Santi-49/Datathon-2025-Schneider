@@ -1018,7 +1018,7 @@ with tab4:
                 y=confusion_data.index,
                 text=np.array(annotations).reshape(confusion_data.shape),
                 texttemplate="%{text}",
-                textfont={"size": 14, "color": "white"},
+                textfont={"size": 14},
                 colorscale=[[0, "#e8f5e9"], [0.5, "#3DCD58"], [1, "#004d1a"]],
                 showscale=True,
             )
@@ -1528,12 +1528,33 @@ with tab5:
     st.write("**Framework**: Streamlit + SHAP")
 
 
-# Footer
+# Enhanced Footer
 st.markdown("---")
-st.markdown(
-    "<div style='text-align: center; color: #666;'>"
-    "Schneider Electric - GTM Machine Learning Explainability | "
-    "Built with Streamlit 🚀"
-    "</div>",
-    unsafe_allow_html=True,
-)
+if logo_base64:
+    st.markdown(
+        f"""
+        <div style='text-align: center; padding: 2rem 0; background: linear-gradient(135deg, rgba(12, 35, 64, 0.3) 0%, rgba(0, 77, 38, 0.3) 100%); border-radius: 1rem; margin-top: 2rem;'>
+            <img src="data:image/png;base64,{logo_base64}" width="100" style="margin-bottom: 1rem;">
+            <h3 style='color: #3DCD58; margin-bottom: 1rem; font-weight: 700;'>⚡ Schneider Electric</h3>
+            <p style='color: #FFFFFF; font-size: 1.2rem; margin-bottom: 0.5rem;'><strong>Life Is On</strong></p>
+            <p style='color: #AAAAAA; font-size: 0.95rem; margin-bottom: 0.5rem;'>AI-Powered Sales Intelligence Platform</p>
+            <p style='color: #3DCD58; font-size: 0.85rem; margin: 0;'>Driving efficiency and sustainability through intelligent analytics 🌍</p>
+            <p style='color: #777; font-size: 0.75rem; margin-top: 1rem;'>Built with Streamlit | Powered by CatBoost & SHAP</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+else:
+    st.markdown(
+        """
+        <div style='text-align: center; padding: 2rem 0; background: linear-gradient(135deg, rgba(12, 35, 64, 0.3) 0%, rgba(0, 77, 38, 0.3) 100%); border-radius: 1rem; margin-top: 2rem;'>
+            <h3 style='color: #3DCD58; margin-bottom: 1rem; font-weight: 700;'>⚡ Schneider Electric</h3>
+            <p style='color: #FFFFFF; font-size: 1.2rem; margin-bottom: 0.5rem;'><strong>Life Is On</strong></p>
+            <p style='color: #AAAAAA; font-size: 0.95rem; margin-bottom: 0.5rem;'>AI-Powered Sales Intelligence Platform</p>
+            <p style='color: #3DCD58; font-size: 0.85rem; margin: 0;'>Driving efficiency and sustainability through intelligent analytics 🌍</p>
+            <p style='color: #777; font-size: 0.75rem; margin-top: 1rem;'>Built with Streamlit | Powered by CatBoost & SHAP</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
