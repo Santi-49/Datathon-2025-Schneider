@@ -1515,13 +1515,6 @@ with tab4:
     best_segment = segments["F1"].idxmax()
     worst_segment = segments["F1"].idxmin()
 
-    st.success(
-        f" **Best Performance**: {best_segment} segment (F1 = {segments.loc[best_segment, 'F1']:.3f})"
-    )
-    st.warning(
-        f" **Needs Improvement**: {worst_segment} segment (F1 = {segments.loc[worst_segment, 'F1']:.3f})"
-    )
-
     st.markdown("---")
 
     # Model-generated plots
@@ -1638,11 +1631,10 @@ if logo_base64:
     st.markdown(
         f"""
         <div style='text-align: center; padding: 2rem 0; background: linear-gradient(135deg, rgba(12, 35, 64, 0.3) 0%, rgba(0, 77, 38, 0.3) 100%); border-radius: 1rem; margin-top: 2rem;'>
-            <img src="data:image/png;base64,{logo_base64}" width="100" style="margin-bottom: 1rem;">
-            <h3 style='color: #3DCD58; margin-bottom: 1rem; font-weight: 700;'>⚡ Schneider Electric</h3>
+            <img src="data:image/png;base64,{logo_base64}" width="300" style="margin-bottom: 1rem;">
             <p style='color: #FFFFFF; font-size: 1.2rem; margin-bottom: 0.5rem;'><strong>Life Is On</strong></p>
             <p style='color: #AAAAAA; font-size: 0.95rem; margin-bottom: 0.5rem;'>AI-Powered Sales Intelligence Platform</p>
-            <p style='color: #3DCD58; font-size: 0.85rem; margin: 0;'>Driving efficiency and sustainability through intelligent analytics 🌍</p>
+            <p style='color: #3DCD58; font-size: 0.85rem; margin: 0;'>Driving efficiency and sustainability through intelligent analytics</p>
             <p style='color: #777; font-size: 0.75rem; margin-top: 1rem;'>Built with Streamlit | Powered by CatBoost & SHAP</p>
         </div>
         """,
@@ -1652,10 +1644,9 @@ else:
     st.markdown(
         """
         <div style='text-align: center; padding: 2rem 0; background: linear-gradient(135deg, rgba(12, 35, 64, 0.3) 0%, rgba(0, 77, 38, 0.3) 100%); border-radius: 1rem; margin-top: 2rem;'>
-            <h3 style='color: #3DCD58; margin-bottom: 1rem; font-weight: 700;'>⚡ Schneider Electric</h3>
             <p style='color: #FFFFFF; font-size: 1.2rem; margin-bottom: 0.5rem;'><strong>Life Is On</strong></p>
             <p style='color: #AAAAAA; font-size: 0.95rem; margin-bottom: 0.5rem;'>AI-Powered Sales Intelligence Platform</p>
-            <p style='color: #3DCD58; font-size: 0.85rem; margin: 0;'>Driving efficiency and sustainability through intelligent analytics 🌍</p>
+            <p style='color: #3DCD58; font-size: 0.85rem; margin: 0;'>Driving efficiency and sustainability through intelligent analytics</p>
             <p style='color: #777; font-size: 0.75rem; margin-top: 1rem;'>Built with Streamlit | Powered by CatBoost & SHAP</p>
         </div>
         """,
