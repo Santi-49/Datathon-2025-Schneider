@@ -229,25 +229,27 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Header with logo
-st.markdown('<div class="header-container">', unsafe_allow_html=True)
-col_logo, col_title = st.columns([1, 4])
-with col_logo:
-    if logo_base64:
-        st.markdown(
-            f'<div class="logo-container"><img src="data:image/png;base64,{logo_base64}" width="120"></div>',
-            unsafe_allow_html=True,
-        )
-with col_title:
+# Logo in upper left corner
+if logo_base64:
     st.markdown(
-        '<h1 class="main-header">Sales Opportunity Prediction</h1>',
+        f"""
+        <div style='position: absolute; top: 10px; left: 10px; z-index: 999;'>
+            <img src="data:image/png;base64,{logo_base64}" width="100">
+        </div>
+        """,
         unsafe_allow_html=True,
     )
-    st.markdown(
-        '<p class="sub-title">AI-Powered Explainability Dashboard | Go-to-Market Analytics</p>',
-        unsafe_allow_html=True,
-    )
-st.markdown("</div>", unsafe_allow_html=True)
+
+# Simple header without container
+st.markdown(
+    '<h1 class="main-header" style="margin-top: 2rem;">Sales Opportunity Prediction</h1>',
+    unsafe_allow_html=True,
+)
+st.markdown(
+    '<p class="sub-title">AI-Powered Explainability Dashboard | Go-to-Market Analytics</p>',
+    unsafe_allow_html=True,
+)
+st.markdown("---")
 
 
 # Load data
@@ -476,7 +478,7 @@ with tab1:
         confusion_data,
         text_auto=True,
         aspect="auto",
-        color_continuous_scale=[[0, "#1a472a"], [0.5, "#3DCD58"], [1, "#7FE89A"]],
+        color_continuous_scale=[[0, "#e8f5e9"], [0.5, "#3DCD58"], [1, "#004d1a"]],
         labels=dict(x="Predicted", y="Actual"),
         title="Model Performance",
     )
@@ -554,7 +556,7 @@ with tab2:
         orientation="h",
         title="Top 10 Most Important Features",
         color="Mean |SHAP|",
-        color_continuous_scale=[[0, "#009530"], [0.5, "#3DCD58"], [1, "#7FE89A"]],
+        color_continuous_scale=[[0, "#e8f5e9"], [0.5, "#3DCD58"], [1, "#004d1a"]],
     )
     fig.update_layout(
         title_font_color="#FFFFFF",
@@ -1017,7 +1019,7 @@ with tab4:
                 text=np.array(annotations).reshape(confusion_data.shape),
                 texttemplate="%{text}",
                 textfont={"size": 14, "color": "white"},
-                colorscale=[[0, "#1a472a"], [0.5, "#3DCD58"], [1, "#7FE89A"]],
+                colorscale=[[0, "#e8f5e9"], [0.5, "#3DCD58"], [1, "#004d1a"]],
                 showscale=True,
             )
         )
