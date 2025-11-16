@@ -32,6 +32,13 @@ env_api_key = os.getenv("OPEN_AI_API_KEY", "")
 if env_api_key:
     st.session_state["openai_api_key"] = env_api_key
 
+# ============================================================================
+# CONFIGURATION: Number of top features to show in LLM prompt (by |SHAP| importance)
+# ============================================================================
+st.session_state["TOP_N_FEATURES_IN_PROMPT"] = (
+    5  # Modify this value to change how many features appear in ##Feature Values section
+)
+
 # Page configuration
 st.set_page_config(
     page_title="Schneider Electric | Sales Opportunity Explainability",
@@ -169,7 +176,7 @@ st.markdown(
     
     /* Tab styling */
     .stTabs [data-baseweb="tab-list"] {{
-        gap: 8px;
+        gap: 24px;
     }}
     
     .stTabs [data-baseweb="tab"] {{
@@ -177,6 +184,7 @@ st.markdown(
         border-radius: 8px 8px 0 0;
         color: #FFFFFF;
         font-weight: 600;
+        padding: 0.5rem 1rem;
     }}
     
     .stTabs [aria-selected="true"] {{
@@ -389,8 +397,8 @@ filtered_df = filtered_df[
 tab1, tab2, tab3, tab4, tab5 = st.tabs(
     [
         "Dataset Overview",
-        "Explore Predictions",
-        "Generate LLM Prompt",
+        "Global Feature Importance",
+        "Local Instance Explanations",
         "Model Performance",
         "Settings",
     ]
@@ -822,12 +830,24 @@ with tab3:
             unsafe_allow_html=True,
         )
 
-        # Format feature values
+        # Sort features by absolute SHAP impact and take top N
+        sorted_features_by_shap = sorted(
+            instance["shap_values"].items(), key=lambda x: abs(x[1]), reverse=True
+        )[: st.session_state["TOP_N_FEATURES_IN_PROMPT"]]
+
+        # Get the feature names from top N
+        top_n_feature_names = [feat for feat, _ in sorted_features_by_shap]
+
+        # Format feature values (only top N by SHAP importance)
         feature_values_text = "\n".join(
             [
-                f"- **{feature_descriptions.get(k, k)}**: {v:.4f}"
-                for k, v in instance["feature_values"].items()
+                f"- **{feature_descriptions.get(k, k)}**: {instance['feature_values'][k]:.4f}"
+                for k in top_n_feature_names
             ]
+        )
+
+        st.info(
+            f"ℹ️ Showing top {len(top_n_feature_names)} most important features by |SHAP| value importance."
         )
 
         # Format SHAP explanation
@@ -842,11 +862,27 @@ with tab3:
             ]
         )
 
-        # Format top factors
+        # Combine feature value and impact explanation (ordered by descending |SHAP| value)
+        feature_values_text = ""
         top_factors_text = ""
-        for i, (feat, val) in enumerate(instance["top_absolute_features"][:5], 1):
+        sorted_by_abs_shap = sorted(
+            instance["shap_values"].items(), key=lambda x: abs(x[1]), reverse=True
+        )
+        for i, (feat, val) in enumerate(
+            sorted_by_abs_shap[: st.session_state["TOP_N_FEATURES_IN_PROMPT"]], 1
+        ):
             direction = "WON" if val > 0 else "LOST"
-            top_factors_text += f"{i}. **{feature_descriptions.get(feat, feat)}** (SHAP: {val:+.4f})\n   - This feature strongly pushes the prediction toward {direction}\n\n"
+            description = feature_descriptions.get(feat, feat)
+            value_str = (
+                f"{instance['feature_values'][feat]:.4f}"
+                if feat in instance["feature_values"]
+                else ""
+            )
+            shap_str = f"{val:+.4f}"
+            explanation = f"{i}. **{description}**\n   - Feature Value: {value_str}\n   - SHAP Impact: {shap_str}\n   - This feature strongly pushes the prediction toward {direction}\n"
+            feature_values_text += explanation + "\n"
+            if i <= 5:
+                top_factors_text += f"{i}. **{description}** (SHAP: {shap_str})\n   - This feature strongly pushes the prediction toward {direction}\n\n"
 
         # Fill in the template
         filled_prompt = prompt_template.format(
@@ -907,7 +943,6 @@ with tab3:
         st.info(
             " **Tip**: Copy this prompt and paste it into your preferred LLM (ChatGPT, Claude, etc.) to get a human-readable explanation of this prediction."
         )
-
 
         # Generate Explanation with OpenAI
         st.markdown("---")
@@ -1558,4 +1593,3 @@ else:
         """,
         unsafe_allow_html=True,
     )
-
