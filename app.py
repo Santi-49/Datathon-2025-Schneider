@@ -326,7 +326,7 @@ st.sidebar.markdown(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 🎯 Filter Options")
+st.sidebar.markdown("###  Filter Options")
 
 # Prediction filter
 prediction_filter = st.sidebar.multiselect(
@@ -359,7 +359,7 @@ st.sidebar.markdown(
     """
     <div style='text-align: center; color: #AAAAAA; font-size: 0.85rem; padding: 1rem;'>
         <p><strong style='color: #3DCD58;'>Life Is On</strong></p>
-        <p>🌍 Sustainability in Action</p>
+        <p> Sustainability in Action</p>
         <p style='font-size: 0.75rem; margin-top: 0.5rem;'>
             Driving efficiency through<br>intelligent analytics
         </p>
@@ -660,13 +660,13 @@ with tab2:
         # Generate Explanation with OpenAI for Global Importance
         st.markdown("---")
         st.markdown(
-            '<div class="sub-header">🤖 AI-Generated Explanation</div>',
+            '<div class="sub-header"> AI-Generated Explanation</div>',
             unsafe_allow_html=True,
         )
 
         if "openai_api_key" in st.session_state and st.session_state["openai_api_key"]:
             if st.button(
-                "🚀 Generate Explanation with AI", type="primary", key="global_ai_btn"
+                " Generate Explanation with AI", type="primary", key="global_ai_btn"
             ):
                 with st.spinner("Generating explanation..."):
                     try:
@@ -676,14 +676,14 @@ with tab2:
                         )
                         st.markdown("### Generated Explanation")
                         st.markdown(explanation)
-                        st.success("✅ Explanation generated successfully!")
+                        st.success(" Explanation generated successfully!")
                     except ValueError as e:
-                        st.error(f"❌ API Key Error: {str(e)}")
+                        st.error(f" API Key Error: {str(e)}")
                     except Exception as e:
-                        st.error(f"❌ Error generating explanation: {str(e)}")
+                        st.error(f" Error generating explanation: {str(e)}")
         else:
             st.warning(
-                "⚠️ OpenAI API key required. Please configure your API key in the Settings tab to use this feature."
+                " OpenAI API key required. Please configure your API key in the Settings tab to use this feature."
             )
 
     except FileNotFoundError:
@@ -844,7 +844,7 @@ with tab3:
         )
 
         st.info(
-            f"ℹ️ Showing top {len(top_n_feature_names)} most important features by |SHAP| value importance."
+            f" Showing top {len(top_n_feature_names)} most important features by |SHAP| value importance."
         )
 
         # Format SHAP explanation
@@ -927,9 +927,9 @@ with tab3:
         function copyToClipboard() {{
             const text = `{escaped_prompt}`;
             navigator.clipboard.writeText(text).then(function() {{
-                alert('✅ Prompt copied to clipboard!');
+                alert(' Prompt copied to clipboard!');
             }}, function(err) {{
-                alert('❌ Failed to copy.');
+                alert(' Failed to copy.');
             }});
         }}
         </script>
@@ -943,13 +943,13 @@ with tab3:
         # Generate Explanation with OpenAI
         st.markdown("---")
         st.markdown(
-            '<div class="sub-header">🤖 AI-Generated Explanation</div>',
+            '<div class="sub-header"> AI-Generated Explanation</div>',
             unsafe_allow_html=True,
         )
 
         if "openai_api_key" in st.session_state and st.session_state["openai_api_key"]:
             if st.button(
-                "🚀 Generate Explanation with AI", type="primary", key="instance_ai_btn"
+                " Generate Explanation with AI", type="primary", key="instance_ai_btn"
             ):
                 with st.spinner("Generating explanation..."):
                     try:
@@ -959,14 +959,14 @@ with tab3:
                         )
                         st.markdown("### Generated Explanation")
                         st.markdown(explanation)
-                        st.success("✅ Explanation generated successfully!")
+                        st.success(" Explanation generated successfully!")
                     except ValueError as e:
-                        st.error(f"❌ API Key Error: {str(e)}")
+                        st.error(f" API Key Error: {str(e)}")
                     except Exception as e:
-                        st.error(f"❌ Error generating explanation: {str(e)}")
+                        st.error(f" Error generating explanation: {str(e)}")
         else:
             st.warning(
-                "⚠️ OpenAI API key required. Please configure your API key in the Settings tab to use this feature."
+                " OpenAI API key required. Please configure your API key in the Settings tab to use this feature."
             )
 
 
@@ -1539,14 +1539,14 @@ with tab5:
 
     if top_n_features != st.session_state["TOP_N_FEATURES_IN_PROMPT"]:
         st.session_state["TOP_N_FEATURES_IN_PROMPT"] = top_n_features
-        st.success(f"✅ Updated to show top {top_n_features} features in prompts")
+        st.success(f" Updated to show top {top_n_features} features in prompts")
         st.rerun()
 
     st.markdown("---")
     st.markdown("### API Configuration")
 
     if "openai_api_key" in st.session_state and st.session_state["openai_api_key"]:
-        st.info("ℹ️ OpenAI API key loaded from environment variable.")
+        st.info(" OpenAI API key loaded from environment variable.")
     else:
         st.warning(
             " No OpenAI API key found in environment variables. Please enter your API key below to enable LLM features."
@@ -1565,7 +1565,7 @@ with tab5:
             # Store in session state for potential use
             st.session_state["openai_api_key"] = api_key
         else:
-            st.info("ℹ️ No API key provided. Some features may be limited.")
+            st.info(" No API key provided. Some features may be limited.")
 
     st.markdown("---")
     st.markdown("### About")
