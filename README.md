@@ -332,10 +332,25 @@ Performance is continuously monitored through the dashboard's Performance tab.
 
 ##  Contributing
 
-This project was developed for the Schneider Electric Challenge  in the 2025 Datathon. 
+This project was developed for the Schneider Electric Challenge in the 2025 Datathon.
+
+### How to Contribute
+
+1.  **Fork the repository**
+2.  **Create a feature branch** (`git checkout -b feature/AmazingFeature`)
+3.  **Commit your changes** (`git commit -m 'Add some AmazingFeature'`)
+4.  **Push to the branch** (`git push origin feature/AmazingFeature`)
+5.  **Open a Pull Request**
 
 ---
 
 **Built with ⚡ by Team Quick2 Datathon 2025**
 
 *Life Is On - Driving efficiency and sustainability through intelligent analytics *
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+

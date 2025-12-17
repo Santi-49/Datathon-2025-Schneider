@@ -1,6 +1,7 @@
 """
 LLM Integration Module
-Handles OpenAI API connections for generating explanations
+
+Handles OpenAI API connections for generating explanations.
 """
 
 import os
@@ -10,7 +11,7 @@ import openai
 
 def generate_explanation(
     prompt: str, api_key: Optional[str] = None, model: str = "gpt-3.5-turbo"
-) -> str|None:
+) -> str | None:
     """
     Generate an explanation using OpenAI API
 

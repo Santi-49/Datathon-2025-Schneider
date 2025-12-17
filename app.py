@@ -46,8 +46,16 @@ st.set_page_config(
 
 
 # Helper function to load and encode image
-def get_base64_image(image_path):
-    """Convert image to base64 for embedding in HTML"""
+def get_base64_image(image_path: str) -> str:
+    """
+    Convert an image file to a base64 string for HTML embedding.
+
+    Args:
+        image_path (str): Path to the image file.
+
+    Returns:
+        str: Base64 encoded string or None if failed.
+    """
     try:
         with open(image_path, "rb") as img_file:
             return base64.b64encode(img_file.read()).decode()
@@ -260,7 +268,12 @@ st.markdown("---")
 # Load data
 @st.cache_data
 def load_data():
-    """Load predictions data and prompt template"""
+    """
+    Load predictions, detailed JSON, prompt template, and feature descriptions.
+
+    Returns:
+        Tuple[pd.DataFrame, dict, str, dict]: dataframe, detailed predictions, prompt template, feature descriptions.
+    """
     try:
         # Load CSV with predictions
         predictions_df = pd.read_csv("data/predictions_with_shap.csv")

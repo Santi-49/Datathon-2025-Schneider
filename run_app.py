@@ -9,12 +9,24 @@ from pathlib import Path
 import sys
 
 
-def check_file_exists(filepath):
-    """Check if required files exist"""
+def check_file_exists(filepath: str) -> bool:
+    """
+    Check if a file exists at the given path.
+
+    Args:
+        filepath (str): Path to the file.
+
+    Returns:
+        bool: True if file exists, False otherwise.
+    """
     return Path(filepath).exists()
 
 
 def main():
+    """
+    Main entry point for the quick launch script.
+    Checks dependencies/files and launches the Streamlit app.
+    """
     print("=" * 60)
     print("Sales Opportunity Explainability System - Quick Launch")
     print("=" * 60)
